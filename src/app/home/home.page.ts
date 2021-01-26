@@ -9,6 +9,25 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class HomePage {
 
+  public componentes =[
+    {
+      tipo: "bici",
+      nombre: "Bicicleta",
+      estado: "desconectado",
+      color: "danger",
+      servicio: "1826",
+      uuid: null,
+      mac: null
+    },
+    { tipo: "pulso",
+      nombre: "Pulsómetro",
+      estado: "desconectado",
+      color: "danger",
+      servicio: "1111",
+      uuid: null,
+      mac: null
+    }
+  ];
   public estadoBici: string ="desconectado";
   private estadoPulso: string ="desconectado";
   private datos : any;
@@ -50,5 +69,16 @@ export class HomePage {
       }
     }
     return null;
-  }  
+  }
+  
+  /* prueba cambiando JSON */
+  cambiarEstado(componente){
+    if (componente.estado=="conectado")
+    {componente.estado="desconectado";
+    componente.color="danger"}
+    else {
+    componente.estado="conectado";
+    componente.color="primary";}
+    
+  }
 }
