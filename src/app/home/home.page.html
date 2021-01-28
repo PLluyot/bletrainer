@@ -1,40 +1,58 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="dark">
+  <ion-toolbar color="primary">
     <ion-title>
       BLETrainer
     </ion-title>
     <ion-buttons slot="secondary">
-      <ion-button routerLink="/devices" routerDirection="forward">
-        <ion-icon slot="icon-only" name="settings-outline" ></ion-icon>
+      <ion-button (click)="sendParam('about')">
+
+        <ion-icon slot="icon-only" name="information-circle-outline"></ion-icon>
+
+      </ion-button>
+      <ion-button (click)="sendParam('devices')">
+      <!-- <ion-button routerLink="/devices" routerDirection="forward"> -->
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+
+
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen>
-  <ion-card >
+  <ion-card>
     <ion-card-header class="ion-text-center">
       <!-- <ion-thumbnail> -->
-        <img style="width:50%;" src="https://bodytone.eu/cms/wp-content/uploads/2020/12/file-Xf6zFE-ePMibs.jpg" alt="logo">
+      <img style="width:50%;" src="https://bodytone.eu/cms/wp-content/uploads/2020/12/file-Xf6zFE-ePMibs.jpg"
+        alt="logo">
       <!-- </ion-thumbnail> -->
-      <ion-card-title >DS-60</ion-card-title>
+      <ion-card-title>DS-60</ion-card-title>
       <!-- <ion-card-subtitle >App creada con IONIC-4 by P.Lluyot</ion-card-subtitle> -->
     </ion-card-header>
     <ion-card-content>
-      <ion-item  *ngFor="let componente of componentes">
+      <!-- <ion-item  *ngFor="let componente of info">
         <ion-label class="ion-text-center">
           {{componente.nombre}} 
         </ion-label>
         <ion-label color="{{componente.color}}" (click)="cambiarEstado(componente)">{{componente.estado}}</ion-label>
+      </ion-item> -->
+      <ion-item>
+        <ion-label class="ion-text-center">
+          {{info.bici.nombre}}
+        </ion-label>
+        <ion-label color="{{info.bici.color}}" (click)="info.cambiarEstado(info.bici)">{{info.bici.estado}}</ion-label>
       </ion-item>
-      
+      <ion-item>
+        <ion-label class="ion-text-center">
+          {{info.pulso.nombre}}
+        </ion-label>
+        <ion-label color="{{info.pulso.color}}" (click)="info.cambiarEstado(info.pulso)">{{info.pulso.estado}}</ion-label>
+      </ion-item>
     </ion-card-content>
   </ion-card>
-  <ion-item >
+  <ion-item>
     <ion-icon name="bicycle"> asdas</ion-icon>
-    <ion-label  color="primary">&nbsp;<small>App creada con IONIC-4 by P.Lluyot</small> 
+    <ion-label color="primary">&nbsp;<small>App creada con IONIC-4 by P.Lluyot</small>
     </ion-label>
-    
   </ion-item>
-  
 </ion-content>
