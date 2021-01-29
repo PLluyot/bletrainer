@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import {InfoBle} from './info-ble';
+import {BLE} from '@ionic-native/ble/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -17,6 +18,7 @@ import {InfoBle} from './info-ble';
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
     InfoBle,
+    BLE,
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

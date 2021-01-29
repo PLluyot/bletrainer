@@ -5,15 +5,17 @@ export class InfoBle {
         estado: "desconectado",
         color: "danger",
         servicio: "1826",
-        uuid: null,
+        id: null,
+        caracteristica: "",
         mac: null
     };
     public pulso: any = {
         nombre: "Pulsómetro",
         estado: "desconectado",
         color: "danger",
-        servicio: "1111",
-        uuid: null,
+        servicio: "180d",
+        id: null,
+        caracteristica: "2a37",
         mac: null
     };
     
@@ -42,7 +44,28 @@ export class InfoBle {
         this.bici = newInfo.bici;
         this.pulso = newInfo.pulso;
     }
+    getInfo (){
+        return this;
+    }
+    setBici(newBici: JSON){
+        this.bici = newBici;
+    }
+    getBici(){
+        return this.bici;
+    }
+    setPulso(newPulso: JSON){
+        this.pulso = newPulso;
+    }
+    getPulso(){
+        return this.pulso;
+    }
+
     // setPulso(newPulso: any){
     //     this.pulso = newPulso;
     // }
+
+
+
+
+
 }

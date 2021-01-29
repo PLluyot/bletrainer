@@ -2,11 +2,18 @@
   <ion-toolbar>
     <ion-title>about</ion-title>
     <ion-back-button (click)="sendParam()"></ion-back-button>
+    <ion-button (click)="scan()">SCAN</ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <p>Esto es lo que recibo</p>
-  <!-- <p>{{info.bici.nombre}}</p> -->
-  <ion-back-button defaultHref="/home"></ion-back-button>
+  
+  <ion-card *ngFor="let device of devices" color="light" (click)="deviceSelected(device)">
+    <ion-card-header>
+      <ion-card-title>{{device.name || "--sin nombre--"}}
+        <ion-icon name="bluetooth"></ion-icon>
+      </ion-card-title>
+      <ion-card-subtitle>id: {{device.id}} - RSSI: {{device.rssi}}</ion-card-subtitle>
+    </ion-card-header>
+  </ion-card>
 </ion-content>
