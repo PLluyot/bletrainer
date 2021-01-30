@@ -39,6 +39,7 @@ export class InfoBle {
                 componente.color = "success";
             }
         }
+        
     }
     setInfo (newInfo: InfoBle) {
         this.bici = newInfo.bici;

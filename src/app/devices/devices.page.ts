@@ -63,7 +63,7 @@ export class DevicesPage implements OnInit {
     if (device && device.id) {
       //si el dispositivo ya está conectado
       this.ble.isConnected(device.id).then(
-        () => console.log("conectado"),
+        () => console.log("ya estaba conectado"),
         () => {
           console.log("desconectado");
           this.conectarDispositivo(device);

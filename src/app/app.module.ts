@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import {InfoBle} from './info-ble';
+import { BleTrainer } from './ble-trainer';
 import {BLE} from '@ionic-native/ble/ngx';
 
 @NgModule({
@@ -18,6 +19,7 @@ import {BLE} from '@ionic-native/ble/ngx';
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
     InfoBle,
+    BleTrainer,
     BLE,
     StatusBar,
     SplashScreen,
