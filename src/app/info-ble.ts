@@ -7,7 +7,8 @@ export class InfoBle {
         servicio: "1826",
         id: null,
         caracteristica: "",
-        mac: null
+        mac: null,
+        dispositivos: []
     };
     public pulso: any = {
         nombre: "Pulsómetro",
@@ -16,9 +17,56 @@ export class InfoBle {
         servicio: "180d",
         id: null,
         caracteristica: "2a37",
-        mac: null
+        mac: null,
+        dispositivos: []
     };
-    
+    public zonas:any[]=[{
+        0:{
+            bps:180
+        },
+        1:{
+            min:0,
+            max:108,
+            p:'60%',
+            color:'white'
+        },
+        2:{
+            min:109,
+            max:117,
+            p:'65%',
+            color:'white'
+        },
+        3:{
+            min:118,
+            max:135,
+            p:'75%',
+            color:'lightyellow'
+        },
+        4:{
+            min:139,
+            max:148,
+            p:'82%',
+            color:'yellow'
+        },
+        5:{
+            min:140,
+            max:160,
+            p:'89%',
+            color:'orange'
+        },
+        6:{
+            min:161,
+            max:169,
+            p:'94%',
+            color:'red'
+        },
+        7:{
+            min:170,
+            max:180,
+            p:'100%',
+            color:'darkred'
+        }
+    }]
     constructor(
         private newbici: any = null, private newpulso: any = null
     ){

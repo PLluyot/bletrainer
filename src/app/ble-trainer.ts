@@ -5,9 +5,13 @@ export class BleTrainer {
     public devices: any[] = [];
     public peripheral: any = {};
     public pulsaciones: any;
+   
+    public ble: BLE; 
+    public zona: NgZone;
 
-    constructor(private ble: BLE, private zona: NgZone) {
-
+    constructor() {
+        this.ble = new BLE();
+        this.zona = new NgZone({});        
     }
     /* ENCENDER BLE */
     encenderBle() {
@@ -16,11 +20,11 @@ export class BleTrainer {
             ,
             () => console.log("error al encender")
         );
-
     }
     /* ESCANEAR BLE */
-    scan(servicios: any[]=null) { //pasar 
+    scan( servicios: any[]=null) { //pasar 
         // var servicio: string[] = [];
+        // this.zona=zona;
         this.devices = []; // clear list
         
         // if (componente) {
@@ -30,7 +34,7 @@ export class BleTrainer {
             
         //     servicio = [];
         // }
-        
+        //this.ble.scan(servicios, 5).subscribe(
         this.ble.scan(servicios, 5).subscribe(
             device => this.onDeviceDiscovered(device),
             error => {console.log("uiuiuiu"+error)}
@@ -89,6 +93,13 @@ export class BleTrainer {
         });
         toast.present();
     }*/
+
+    /* DESCONECTAR DISPOSITIVO */
+    desconectarBle(uuid: string) {
+        this.ble.isConnected(uuid).then(() =>
+          this.ble.disconnect(uuid).then(() => console.log("lo he desconectado")))
+    
+      }
     /* NOTIFICACIONES */
     subscribirNotificacion(device: any, servicio: string, caract: string) { //device = pulso o bici
         if (device && device.id) {

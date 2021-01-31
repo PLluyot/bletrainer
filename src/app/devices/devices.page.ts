@@ -2,10 +2,13 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
-import { InfoBle } from '../info-ble';
 import { ToastController } from '@ionic/angular';
 //pruebas con BLE
 import { BLE } from '@ionic-native/ble/ngx';
+//mis clases
+import { InfoBle } from '../info-ble';
+import { BleTrainer} from '../ble-trainer';
+
 
 @Component({
   selector: 'app-devices',
@@ -13,16 +16,23 @@ import { BLE } from '@ionic-native/ble/ngx';
   styleUrls: ['./devices.page.scss'],
 })
 export class DevicesPage implements OnInit {
-  private info: InfoBle;
+  // private info: InfoBle;
   private devices: any[] = [];
+  //pruebas
+  private devicesPulso: any[]=[];
+  private devicesBici: any[]=[];
+  
+
   private peripheral: any = {};
   dataFromDevice: any;
   private pulsaciones  = 0;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
-    private ble: BLE,
-    private ngZone: NgZone,
+    private info: InfoBle, //IMPLEMENTACION CLASE
+    private bleTrainer: BleTrainer, //IMPLEMENTACION CLASE
+    private ble: BLE, // QUITAR
+    private ngZone: NgZone, //QUITAR
     private toastCtrl: ToastController) {
 
     //recibimos el objeto InfoBle por parámetros
@@ -34,7 +44,43 @@ export class DevicesPage implements OnInit {
     }
     );
   }
-  scan(componente: any) {
+  /******************INICIO************ */
+  ionViewDidEnter() {
+
+    //this.scan("");
+    this.ble.isConnected(this.info.pulso.id).then(
+      () => console.log("conectado a pulso"),
+      () => console.log("NO conectado a pulso"),
+
+    )
+  }
+
+  ngOnInit() {
+    this.scan(this.info.bici);
+    this.scan(this.info.pulso);
+  }
+  /*******************ESCANEAR************ */
+  scan(componente: any) { //pasamos el componente bici o pulso (this.info.bici o pulso)
+    
+    var servicio: string[] = []; //inicializamos el array de servicios
+
+    this.devices = []; // clear list
+    
+
+    if (componente) { //si existe el componente, obtenemos los servicios
+      servicio = [componente.servicio];
+      componente.dispositivos = []; //borramos el listado de dispositivos encontrados previamente
+      console.log("entra2");
+    }
+    else servicio = []; //si no existe el componente borramos los servicios previos
+
+    // this.ngZone.run(() => {
+      this.devices=this.bleTrainer.scan(servicio); //escaneamos el componente
+    if (componente){
+      componente.dispositivos = this.devices; //agregamos al JSON del componente los dispositivos encontrados
+    }
+  }
+  /*scan(componente: any) {
     var servicio: string[] = [];
 
     this.devices = []; // clear list
@@ -52,60 +98,61 @@ export class DevicesPage implements OnInit {
 
     // this.ble.connect('E3:5E:65:14:16:33')
   }
-  onDeviceDiscovered(device) {
-    this.ngZone.run(() => {
-      this.devices.push(device);
-    });
-  }
+  */
+  // onDeviceDiscovered(device) {
+  //   this.ngZone.run(() => {
+  //     this.devices.push(device);
+  //   });
+  // }
   //conexión
-  establecerConexionDispositivo(device: any) {
-    console.log("tratamos de comprobar la conexion con :" + device.id);
-    if (device && device.id) {
-      //si el dispositivo ya está conectado
-      this.ble.isConnected(device.id).then(
-        () => console.log("ya estaba conectado"),
-        () => {
-          console.log("desconectado");
-          this.conectarDispositivo(device);
-        }
-      )
-    }
-  }
+  // establecerConexionDispositivo(device: any) {
+  //   console.log("tratamos de comprobar la conexion con :" + device.id);
+  //   if (device && device.id) {
+  //     //si el dispositivo ya está conectado
+  //     this.ble.isConnected(device.id).then(
+  //       () => console.log("ya estaba conectado"),
+  //       () => {
+  //         console.log("desconectado");
+  //         this.conectarDispositivo(device);
+  //       }
+  //     )
+  //   }
+  // }
 
-  conectarDispositivo(device: any) {
-    console.log("nos conectamos a :" + device.id);
+  // conectarDispositivo(device: any) {
+  //   console.log("nos conectamos a :" + device.id);
 
 
-    if (device && device.id) {
+  //   if (device && device.id) {
 
-      this.info.pulso.id = device.id;
-      this.ble.connect(this.info.pulso.id).subscribe(
-        peripheral => {
-          console.log("A"); this.dispositivoConectado(peripheral);
-          device.estado = "conectado";
-          device.color = "success";
-        },
-        peripheral => { console.log("B"); this.dispositivoDesconectado(peripheral) }
-      );
-    }
-  }
+  //     this.info.pulso.id = device.id;
+  //     this.ble.connect(this.info.pulso.id).subscribe(
+  //       peripheral => {
+  //         console.log("A"); this.dispositivoConectado(peripheral);
+  //         device.estado = "conectado";
+  //         device.color = "success";
+  //       },
+  //       peripheral => { console.log("B"); this.dispositivoDesconectado(peripheral) }
+  //     );
+  //   }
+  // }
 
-  dispositivoConectado(peripheral) {
-    this.ngZone.run(() => {
-      this.peripheral = peripheral;
-    });
-    console.log('dispositivoConectado ' + JSON.stringify(this.peripheral));
-    //actualizamos el estado 
-  }
+  // dispositivoConectado(peripheral) {
+  //   this.ngZone.run(() => {
+  //     this.peripheral = peripheral;
+  //   });
+  //   console.log('dispositivoConectado ' + JSON.stringify(this.peripheral));
+  //   //actualizamos el estado 
+  // }
 
-  async dispositivoDesconectado(peripheral) {
-    const toast = await this.toastCtrl.create({
-      message: 'The peripheral unexpectedly disconnected',
-      duration: 3000,
-      position: 'middle'
-    });
-    toast.present();
-  }
+  // async dispositivoDesconectado(peripheral) {
+  //   const toast = await this.toastCtrl.create({
+  //     message: 'The peripheral unexpectedly disconnected',
+  //     duration: 3000,
+  //     position: 'middle'
+  //   });
+  //   toast.present();
+  // }
 
   /************************************************************ */
   //      PULSO Y CADENCIA Y VELOCIDAD
@@ -127,19 +174,7 @@ export class DevicesPage implements OnInit {
 
     //   });
   }
-  ionViewDidEnter() {
-
-    //this.scan("");
-    this.ble.isConnected(this.info.pulso.id).then(
-      () => console.log("conectado a pulso"),
-      () => console.log("NO conectado a pulso"),
-
-    )
-  }
-
-  ngOnInit() {
-    //this.scan("");
-  }
+  
 
 
   sendParam() {

@@ -19,12 +19,12 @@
   <ion-card>
     <ion-card-header class="ion-text-center">
       <!-- <ion-thumbnail> -->
-      <img style="width:50%;" src="https://bodytone.eu/cms/wp-content/uploads/2020/12/file-Xf6zFE-ePMibs.jpg"
+      <img style="width:50%;" src="./assets/img/ds60.jpg"
         alt="logo">
       <ion-card-title>DS-60</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-item>
+      <!-- <ion-item>
         <ion-label class="ion-text-left">
           {{info.bici.nombre}}
         </ion-label>
@@ -36,33 +36,36 @@
         </ion-label>
         <ion-label color="{{info.pulso.color}}" (click)="cambiarEstado(info.pulso)">{{info.pulso.estado}}
         </ion-label>
-      </ion-item>
+      </ion-item>-->
+      <ion-grid> 
+        <ion-row class="ion-align-items-center">
+          <ion-col size="6">
+            <ion-card class="ion-text-center">
+              <ion-card-subtitle>{{info.pulso.nombre}}</ion-card-subtitle>
+              <!-- <ion-thumbnail slot="start"> -->
+              <img width="40%" src="./assets/img/heart.png" />
+              <!-- </ion-thumbnail> -->
+              <ion-card-content>
+                <ion-label color="{{info.pulso.color}}" (click)="cambiarEstado(info.pulso)">{{info.pulso.estado}}</ion-label>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="6">
+            <ion-card class="ion-text-center">
+              <ion-card-subtitle>{{info.bici.nombre}}</ion-card-subtitle>
+              <!-- <ion-thumbnail slot="start"> -->
+              <img width="40%" src="./assets/img/bici.png" />
+              <!-- </ion-thumbnail> -->
+              <ion-card-content>
+                <ion-label color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)">{{info.bici.estado}}</ion-label>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-card-content>
   </ion-card>
-  <ion-grid>
-    <ion-row class="ion-align-items-center">
-      <ion-col size="6">
-        <ion-card class="ion-text-center">
-          <!-- <ion-thumbnail slot="start"> -->
-          <img width="40%" src="https://cdn.onlinewebfonts.com/svg/img_492378.png" />
-          <!-- </ion-thumbnail> -->
-          <ion-card-content>
-            <ion-label>Pulsómetro</ion-label>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-      <ion-col size="6">
-        <ion-card class="ion-text-center">
-          <!-- <ion-thumbnail slot="start"> -->
-          <img width="40%" src="https://cdn1.iconfinder.com/data/icons/sports-1-7/128/Cardio-Bike-Sporting-Healthy-Stationary-Fitness-Spin-512.png" />
-          <!-- </ion-thumbnail> -->
-          <ion-card-content>
-            <ion-label>Indoor Bike</ion-label>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  
 </ion-content>
 <ion-footer>
   <ion-item lines="none">

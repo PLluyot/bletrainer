@@ -27,6 +27,13 @@
 }
 
 /******************** MIOS *****************/
-ion-card img {
-  padding-top:10px;
+// ion-card img {
+//   padding-top:10px;
+// }
+ion-card{
+  height:100%;
+}
+ion-card ion-col ion-card {
+   min-height:150px;
+  
 }

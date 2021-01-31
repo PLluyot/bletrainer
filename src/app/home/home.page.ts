@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Router, NavigationExtras } from '@angular/router';
 
 import { InfoBle } from '../info-ble';
+import { BleTrainer } from '../ble-trainer';
+
 
 
 @Component({
@@ -16,6 +18,7 @@ export class HomePage {
 
   constructor(
     private info: InfoBle, //IMPLEMENTACION CLASE
+    private bleTrainer: BleTrainer, //IMPLEMENTACION CLASE
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private ngZone: NgZone
@@ -53,10 +56,22 @@ export class HomePage {
       if (dispositivo.estado == "desconectado") {
         //vamos a conectarnos al último dispositivo
         this.setMensajeEstado("conectando...");
+        //comprobamos si tenemos almacenado el id del dispositivo
+          if (dispositivo.id){
+            this.bleTrainer.establecerConexionDispositivo(dispositivo.id);
+            this.info.cambiarEstado(dispositivo);
+          }
+          else{
+            //primero intentamos ir a la página de configuracion para que se conecte a un dispositivo
+            this.sendParam('devices');
+            this.setMensajeEstado("No se puede conectar al dispositivo");
+          
+          }
+            
         //si no nos conectamos --> no cambiamos el estado
         //si nos conectamos--> cambiamos estado
-        this.info.cambiarEstado(dispositivo);
-        this.setMensajeEstado("");
+        
+        // this.setMensajeEstado("");
       }
       else {
         //desconectamos el dispositivo en el caso de estar conectado
@@ -70,5 +85,6 @@ export class HomePage {
     this.ngZone.run(() => {
       this.mensajeEstado = message;
     });
+    
   }
 }

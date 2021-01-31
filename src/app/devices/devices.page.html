@@ -33,8 +33,8 @@
       <!-- bicicleta -->
        <ion-item-group>
         <ion-item-divider color="warning">
-          <ion-label slot="start">Bicicleta</ion-label>
-          <ion-label slot="start" color="{{info.bici.color}}">{{this.info.pulso.estado}}</ion-label>
+          <ion-label slot="start">{{info.bici.nombre}}</ion-label>
+          <ion-label slot="start" color="{{info.bici.color}}">{{info.bici.estado}}</ion-label>
           <ion-buttons slot="end">
             <ion-button color="dark" fill="outline" size="small" shape="round"
               (click)="scan(this.info.bici)">
@@ -43,7 +43,7 @@
             </ion-button>
           </ion-buttons>
         </ion-item-divider>
-        <ion-item *ngFor="let device of devices" color="light" (click)="establecerConexionDispositivo(device)">
+        <ion-item *ngFor="let device of info.bici.dispositivos" color="light" (click)="bleTrainer.establecerConexionDispositivo(device)">
           <!-- <ion-card *ngFor="let device of devices" color="light" (click)="deviceSelected(device)">
             <ion-card-header> -->
               <!-- <ion-card-title> -->
@@ -67,25 +67,60 @@
       <ion-item-group>
         <ion-item-divider color="warning">
 
-          <ion-label slot="start">Pulsómetro</ion-label>
+          <ion-label slot="start">{{info.pulso.nombre}}</ion-label>
           <ion-label class=" ion-text-end ion-float-right uid">{{pulsaciones}}</ion-label>
-          <ion-label slot="start" color="{{info.pulso.color}}">{{this.info.pulso.estado}}</ion-label>
+          <ion-label slot="start" color="{{info.pulso.color}}">{{info.pulso.estado}}</ion-label>
           <ion-buttons slot="end">
             <ion-button color="dark" fill="outline" size="small" shape="round"
               (click)="scan(this.info.pulso)">
               scan
               <ion-icon name="bluetooth"></ion-icon>
             </ion-button>
+            
           </ion-buttons>
         </ion-item-divider>
-        <ion-item *ngFor="let device of devices" color="light" (click)="establecerConexionDispositivo(device)">
+        <ion-item *ngFor="let device of info.pulso.dispositivos" color="light" (click)="bleTrainer.establecerConexionDispositivo(device)">
           <ion-label slot="start" color="primary">{{device.name || "--sin nombre--"}}</ion-label>
           <!-- <ion-label class=" ion-text-end ion-float-right uid">{{pulsaciones}}</ion-label> -->
           <ion-label class=" ion-text-end ion-float-right uid">{{device.id}}</ion-label>
         </ion-item>
       </ion-item-group>
+      <!-- /* pruebas -->
+      <ion-item-group>
+        <ion-item-divider color="warning">
+
+          <ion-label slot="start">TODO</ion-label>
+          
+          <ion-label slot="start" color="{{info.pulso.color}}">vacio</ion-label>
+          <ion-buttons slot="end">
+            <ion-button color="dark" fill="outline" size="small" shape="round"
+              (click)="scan()">
+              TODO
+              <ion-icon name="bluetooth"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item-divider>
+        <ion-item *ngFor="let device of devices" color="light" (click)="bleTrainer.establecerConexionDispositivo(device)">
+          <ion-label slot="start" color="primary">{{device.name || "--sin nombre--"}}</ion-label>
+          <!-- <ion-label class=" ion-text-end ion-float-right uid">{{pulsaciones}}</ion-label> -->
+          <ion-label class=" ion-text-end ion-float-right uid">{{device.id}}</ion-label>
+        </ion-item>
+      </ion-item-group>
+      
       </ion-list>
-    <ion-label>Selecciona un dispositivo para conectarte</ion-label>
+    <ion-label class="ion-text-center">Selecciona un dispositivo para conectarte</ion-label>
   </ion-card>
 
 </ion-content>
+<ion-footer>
+  <!-- <ion-item lines="none">
+    <ion-icon name="bicycle"></ion-icon>
+    <ion-label color="primary">&nbsp;<small>App creada con IONIC-4 by P.Lluyot</small>
+    </ion-label>
+  </ion-item> -->
+  <ion-toolbar>
+    <ion-item color="dark">
+      <ion-label class="ion-text-center">{{mensajeEstado}}</ion-label>
+    </ion-item>
+  </ion-toolbar>
+</ion-footer>

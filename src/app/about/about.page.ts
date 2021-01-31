@@ -2,12 +2,12 @@ import { CompileShallowModuleMetadata } from '@angular/compiler';
 import { Component, OnInit, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router'; //recibir
 import { Router, NavigationExtras } from '@angular/router'; //enviar
-
+//mis clases
 import { InfoBle } from '../info-ble';
 import { BleTrainer} from '../ble-trainer';
 
 //pruebas con BLE
-import { BLE } from '@ionic-native/ble/ngx';
+// import { BLE } from '@ionic-native/ble/ngx';
 
 @Component({
   selector: 'app-about',
@@ -15,14 +15,17 @@ import { BLE } from '@ionic-native/ble/ngx';
   styleUrls: ['./about.page.scss'],
 })
 export class AboutPage implements OnInit {
-  private info: InfoBle;
+  // private info: InfoBle;
   private devices : any[] =[];
+ // private bleTrainer: BleTrainer; 
+  // private aboutZone: NgZone;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
-    //private ble: BLE,
-    private bleTrainer: BleTrainer,
-    private ngZone: NgZone) {
+    private info: InfoBle, //IMPLEMENTACION CLASE
+    private bleTrainer: BleTrainer, //IMPLEMENTACION CLASE
+    private ngZone: NgZone)
+     {
 
     //recibimos el objeto InfoBle por parámetros
     this.activatedRoute.queryParams.subscribe((params) => {
@@ -41,9 +44,14 @@ export class AboutPage implements OnInit {
    ngOnInit() {
    }
   scan() {
+    this.bleTrainer.encenderBle();
+
     this.devices = []; // clear list
     console.log("entra");
-    this.devices=this.bleTrainer.scan([]);
+   // this.ngZone.run(() => {
+      this.devices=this.bleTrainer.scan(['1826','1827']);  
+   // });
+    
     //console.log("ppp:"+this.devices[0])
     // this.ble.connect('E3:5E:65:14:16:33')
   }
@@ -53,9 +61,6 @@ export class AboutPage implements OnInit {
   //   });
   // }
   
-  
-
-
   sendParam() {
     let paramRouter: NavigationExtras = {
       queryParams: {
