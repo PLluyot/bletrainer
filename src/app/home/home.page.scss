@@ -30,10 +30,21 @@
 // ion-card img {
 //   padding-top:10px;
 // }
-ion-card{
-  height:100%;
-}
-ion-card ion-col ion-card {
-   min-height:150px;
+// ion-card{
+//   height:100%;
+// }
+//ion-card ion-col ion-card {
+  //  min-height:150px;
   
+//}
+ion-card-content, ion-col{
+  margin: 0 !important;
+  padding: 0 !important;
+}
+ion-col img, ion-col ion-card-subtitle{
+  padding-top:10px;
+}
+h1.dispositivoValor{
+  text-align:center;
+  // font-size:10em;
 }

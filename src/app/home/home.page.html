@@ -15,12 +15,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
+<ion-content fullscreen color="light">
   <ion-card>
     <ion-card-header class="ion-text-center">
       <!-- <ion-thumbnail> -->
-      <img style="width:50%;" src="./assets/img/ds60.jpg"
-        alt="logo">
+      <img style="width:50%;" src="./assets/img/ds60.jpg" alt="logo">
       <ion-card-title>DS-60</ion-card-title>
     </ion-card-header>
     <ion-card-content>
@@ -37,34 +36,82 @@
         <ion-label color="{{info.pulso.color}}" (click)="cambiarEstado(info.pulso)">{{info.pulso.estado}}
         </ion-label>
       </ion-item>-->
-      <ion-grid> 
-        <ion-row class="ion-align-items-center">
-          <ion-col size="6">
-            <ion-card class="ion-text-center">
-              <ion-card-subtitle>{{info.pulso.nombre}}</ion-card-subtitle>
-              <!-- <ion-thumbnail slot="start"> -->
-              <img width="40%" src="./assets/img/heart.png" />
-              <!-- </ion-thumbnail> -->
-              <ion-card-content>
-                <ion-label color="{{info.pulso.color}}" (click)="cambiarEstado(info.pulso)">{{info.pulso.estado}}</ion-label>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-          <ion-col size="6">
-            <ion-card class="ion-text-center">
-              <ion-card-subtitle>{{info.bici.nombre}}</ion-card-subtitle>
-              <!-- <ion-thumbnail slot="start"> -->
-              <img width="40%" src="./assets/img/bici.png" />
-              <!-- </ion-thumbnail> -->
-              <ion-card-content>
-                <ion-label color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)">{{info.bici.estado}}</ion-label>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      
     </ion-card-content>
   </ion-card>
+
+  <!-- otro -->
+  <ion-grid no-margin>
+    <ion-row class="ion-align-items-center">
+      <ion-col size="6">
+        <ion-card class="ion-text-center" (click)="cambiarEstado(info.pulso)">
+          <ion-card-subtitle>{{info.pulso.nombre}}</ion-card-subtitle>
+          <!-- <ion-thumbnail slot="start"> -->
+          <img width="35%" src="./assets/img/heart.png" />
+          <!-- </ion-thumbnail> -->
+          <ion-card-content class="ion-text-center">
+            <ion-label>
+              <h1>{{bleTrainer.pulsaciones}}</h1>
+            </ion-label>
+
+            <ion-label color="{{info.pulso.color}}" ><small>{{info.pulso.estado}}</small>
+            </ion-label>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card class="ion-text-center">
+          <ion-card-subtitle>{{info.bici.nombre}}</ion-card-subtitle>
+          <!-- <ion-thumbnail slot="start"> -->
+          <img width="27%" src="./assets/img/bici.png" />
+          <!-- </ion-thumbnail> -->
+          <ion-card-content>
+            <ion-label>
+              <h1>125</h1>
+            </ion-label>
+            <ion-label color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)"><small>{{info.bici.estado}}</small></ion-label>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+
+
+
+
+    <ion-row class="ion-align-items-center">
+      <ion-col size="6">
+        <ion-card class="ion-text-center">
+          <ion-card-subtitle>{{info.pulso.nombre}}</ion-card-subtitle>
+          <!-- <ion-thumbnail slot="start"> -->
+          <img width="35%" src="./assets/img/heart.png" />
+          <!-- </ion-thumbnail> -->
+          <ion-card-content class="ion-text-center">
+            <ion-label>
+              <h1>125</h1>
+            </ion-label>
+
+            <ion-label color="{{info.pulso.color}}" (click)="cambiarEstado(info.pulso)"><small>{{info.pulso.estado}}</small>
+            </ion-label>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card class="ion-text-center">
+          <ion-card-subtitle>{{info.bici.nombre}}</ion-card-subtitle>
+          <!-- <ion-thumbnail slot="start"> -->
+          <img width="27%" src="./assets/img/bici.png" />
+          <!-- </ion-thumbnail> -->
+          <ion-card-content>
+            <ion-label>
+              <h1>125</h1>
+            </ion-label>
+            <ion-label color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)"><small>{{info.bici.estado}}</small></ion-label>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   
 </ion-content>
 <ion-footer>

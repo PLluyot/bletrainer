@@ -12,7 +12,7 @@ export class BleTrainer {
     constructor() {
         this.ble = new BLE();
         this.zona = new NgZone({});
-        this.pulsaciones=0;
+        this.pulsaciones = 0;
     }
     /* ENCENDER BLE */
     encenderBle() {
@@ -22,32 +22,34 @@ export class BleTrainer {
             () => console.log("error al encender")
         );
     }
+    /******************************************************************** */
     /* ESCANEAR BLE */
     scan(servicios: any[] = null) { //pasar 
         // var servicio: string[] = [];
         // this.zona=zona;
         this.devices = []; // clear list
 
-        // if (componente) {
-        //     servicio = [componente.servicio];
-        // }
-        // else {
-
-        //     servicio = [];
-        // }
-        //this.ble.scan(servicios, 5).subscribe(
         this.ble.scan(servicios, 5).subscribe(
-            device => this.onDeviceDiscovered(device),
-            error => { console.log("uiuiuiu" + error) }
+            (device) => this.onDeviceDiscovered(device),
+            (error) =>  new Error(error)
         );
-
-        return (this.devices)
+        return new Promise(
+            (encontrado, error) => {
+                setTimeout(
+                    ()=> this.devices
+                         ? encontrado(this.devices)
+                         : error(new Error("mal")),
+                    1000
+                )
+            }
+        );
     }
     onDeviceDiscovered(device) {
         this.zona.run(() => {
             this.devices.push(device);
         });
     }
+    /********************************************************************* */
     /* CONECTAR CON DISPOSITIVO BLE */
     establecerConexionDispositivo(device: any, objetoConIdActual?: any) {
         console.log("tratamos de comprobar la conexion con :" + device.id);
@@ -106,12 +108,12 @@ export class BleTrainer {
     /* DESCONECTAR DISPOSITIVO */
     desconectarBle(uuid: string) {
         this.ble.isConnected(uuid).then(
-            () =>
-                {this.ble.disconnect(uuid).then(() => console.log("lo he desconectado"))},
+            () => { this.ble.disconnect(uuid).then(() => console.log("lo he desconectado")) },
             () => console.log("tratando de desconectar pero el dispositivo no estaba conectado")
         )
 
     }
+    /************************************************************************************* */
     /* NOTIFICACIONES */
     subscribirNotificacion(device: any, servicio: string, caract: string) { //device = pulso o bici
         if (device && device.id) {
@@ -129,14 +131,15 @@ export class BleTrainer {
                         )
                 );
         }
-        else  
-        console.log("no podemos subscribirnos, parametros incorrectos");
+        else
+            console.log("no podemos subscribirnos, parametros incorrectos");
     }
     onValueChange(buffer: ArrayBuffer) { //hay que meter en la zona asíncrona
         var dataFromDevice: any;
         this.zona.run(() => {
             try {
                 dataFromDevice = new Uint8Array(buffer);
+                if (this.pulsaciones!=dataFromDevice[1])
                 this.pulsaciones = dataFromDevice[1];
                 //if (this.dataFromDevice == undefined)
                 //         this.dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");

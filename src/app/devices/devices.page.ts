@@ -7,7 +7,7 @@ import { ToastController } from '@ionic/angular';
 import { BLE } from '@ionic-native/ble/ngx';
 //mis clases
 import { InfoBle } from '../info-ble';
-import { BleTrainer} from '../ble-trainer';
+import { BleTrainer } from '../ble-trainer';
 
 
 @Component({
@@ -16,16 +16,16 @@ import { BleTrainer} from '../ble-trainer';
   styleUrls: ['./devices.page.scss'],
 })
 export class DevicesPage implements OnInit {
-  // private info: InfoBle;
+  private mensajeEstado : string =""; // mensaje para la barra de estados
   private devices: any[] = [];
   //pruebas
-  private devicesPulso: any[]=[];
-  private devicesBici: any[]=[];
-  
+  public devicesPulso: any[] = [];
+  public devicesBici: any[] = [];
+
 
   private peripheral: any = {};
   dataFromDevice: any;
-  private pulsaciones  = 0;
+  private pulsaciones = 0;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -49,37 +49,69 @@ export class DevicesPage implements OnInit {
 
     //this.scan("");
     this.ble.isConnected(this.info.pulso.id).then(
-      () => console.log("conectado a pulso"),
-      () => console.log("NO conectado a pulso"),
+      () => {console.log("conectado a pulso"),
+            this.setMensajeEstado("conectado a pulso")},
+      () => {console.log("NO conectado a pulso"),
+      this.setMensajeEstado("NO conectado a pulso")}
 
     )
   }
 
   ngOnInit() {
-    this.scan(this.info.bici);
-    this.scan(this.info.pulso);
+    //this.scan(this.info.bici);
+    //this.scan(this.info.pulso);
   }
   /*******************ESCANEAR************ */
-  scan(componente: any) { //pasamos el componente bici o pulso (this.info.bici o pulso)
+  scanConectarPulso(){
     
-    var servicio: string[] = []; //inicializamos el array de servicios
+    
+    this.ngZone.run(()=>{
+      this.scan(this.info.pulso) ; // meter promesa
+      //this.devicesPulso = this.devices;
 
+      if (this.info.pulso.dispositivos[0]){
+        console.log(this.info.pulso.dispositivos[0]);
+        // this.info.pulso.id=this.info.pulso.dispositivos[0].id; // actualizo el id con el primero
+        // this.bleTrainer.establecerConexionDispositivo(this.info.pulso.dispositivos[0].id,this.info.pulso)
+        //this.leerPulso(this.info.pulso);
+      }
+
+    })
+    
+  }
+  scan(componente: any) { //pasamos el componente bici o pulso (this.info.bici o pulso)
+    var servicio: string[] = []; //inicializamos el array de servicios
     this.devices = []; // clear list
     
-
+    console.log("entramos en SCAN");
     if (componente) { //si existe el componente, obtenemos los servicios
       servicio = [componente.servicio];
       componente.dispositivos = []; //borramos el listado de dispositivos encontrados previamente
-      console.log("entra2");
+      console.log("filtramos por servicios y borramos array");
     }
-    else servicio = []; //si no existe el componente borramos los servicios previos
+    else{
+      servicio = []; //si no existe el componente borramos los servicios previos
+      console.log("no existe el componente borramos los servicios previos, buscamos todo");
+    } 
 
     // this.ngZone.run(() => {
-      this.devices=this.bleTrainer.scan(servicio); //escaneamos el componente
-    if (componente){
-      componente.dispositivos = this.devices; //agregamos al JSON del componente los dispositivos encontrados
-    }
+    this.bleTrainer.scan(servicio).then(
+      (dispositivosEncontrados: any[]) =>{ 
+        this.devices=dispositivosEncontrados;
+        if (componente) { // si le pasamos pulso o bici, almacenamos el array de componentes en su JSON
+          componente.dispositivos = this.devices; //agregamos al JSON del componente los dispositivos encontrados
+        }
+      },
+      (error) => console.log(error)
+      ); //escaneamos el componente
+    
   }
+  /*****************CONECTAR************* 
+   * si el dispositivo estaba conectado y es distinto componente lo desconectamos ??
+   * *****************************************/
+
+
+
   /*scan(componente: any) {
     var servicio: string[] = [];
 
@@ -157,9 +189,15 @@ export class DevicesPage implements OnInit {
   /************************************************************ */
   //      PULSO Y CADENCIA Y VELOCIDAD
   /************************************************************ */
-  obtenerPulso() { //device :any){
+  leerPulso(device:any ) { //device :any){
     var pulso: any;
-    this.subscribe();
+    console.log("entramos en leer pulso");
+    this.bleTrainer.subscribirNotificacion(device, device.servicio, device.caracteristica);
+    
+    
+    //this.subscribe();
+    
+    
     // this.ble.startNotification(
     //   this.info.pulso.id,
     //   '180d',
@@ -174,7 +212,7 @@ export class DevicesPage implements OnInit {
 
     //   });
   }
-  
+
 
 
   sendParam() {
@@ -189,10 +227,10 @@ export class DevicesPage implements OnInit {
   lectura(servicio: string, caracteristica: string) {
     this.ble.read(this.info.pulso.id, servicio, caracteristica).then(
 
-      function (data){
+      function (data) {
         //console.log("READ:" + String.fromCharCode.apply(null, new Uint8Array(data)));
-        console.log ("Read" + JSON.stringify(data));
-      }, function(error) {
+        console.log("Read" + JSON.stringify(data));
+      }, function (error) {
         console.log("Error Read" + JSON.stringify(error));
       }
 
@@ -213,7 +251,7 @@ export class DevicesPage implements OnInit {
 
     );
   }
-  
+
 
   desconectar(uuid: string) {
     this.ble.isConnected(uuid).then(() =>
@@ -221,87 +259,95 @@ export class DevicesPage implements OnInit {
 
   }
 
-  escriboDato() {
-    var inputdata = new Uint8Array(3);
-    inputdata[0] = 0x53; // S
-    inputdata[1] = 0x54; // T
-    inputdata[2] = 0x0a; // LF
-    this.ble.writeWithoutResponse(
+  // escriboDato() {
+  //   var inputdata = new Uint8Array(3);
+  //   inputdata[0] = 0x53; // S
+  //   inputdata[1] = 0x54; // T
+  //   inputdata[2] = 0x0a; // LF
+  //   this.ble.writeWithoutResponse(
 
-      this.info.pulso.id,
-      '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-      '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
-      inputdata.buffer
-    )
-      .then(
+  //     this.info.pulso.id,
+  //     '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+  //     '6e400002-b5a3-f393-e0a9-e50e24dcca9e',
+  //     inputdata.buffer
+  //   )
+  //     .then(
+  //       data => {
+
+
+  //         console.log("retorno:" + data);
+  //         //debugger;
+  //         this.obtenerPulso(this.info.pulso)
+  //       },
+  //       () =>
+
+  //         //this.showAlert(
+  //         console.log("Unexpected Error",
+  //           "Failed to subscribe for changes, please try to re-connect.")
+  //     )
+  // }
+  /*************************************************************** */
+  encenderBle() {
+    this.ble.enable().then(
+      () => console.log("enciendo BLE")
+      ,
+      () => console.log("error al encender")
+    );
+
+  }
+
+
+  /************************************** */
+  /****************************************** */
+  subscribe() {
+
+    this.ble
+      .startNotification(this.info.pulso.id,
+        this.info.pulso.servicio, this.info.pulso.caracteristica)
+      .subscribe(
         data => {
+          // console.log("aqui"+data[0]);
+          this.onValueChange(data[0]);
 
-
-          console.log("retorno:" + data);
-          //debugger;
-          this.obtenerPulso()
         },
         () =>
 
           //this.showAlert(
           console.log("Unexpected Error",
-            "Failed to subscribe for changes, please try to re-connect.")
-      )
-    }
-    /*************************************************************** */
-    encenderBle (){
-      this.ble.enable().then(
-        ()=>console.log("enciendo BLE")
-        ,
-        ()=>console.log("error al encender")
+            "Failed to subscribe for changes, please try to re-connect."
+          )
       );
 
-    }
-
-
-    /************************************** */
-    /****************************************** */
-    subscribe() {
-    
-      this.ble
-          .startNotification(this.info.pulso.id,
-          '180d', '2a37')
-          .subscribe(
-              data => {
-               // console.log("aqui"+data[0]);
-                  this.onValueChange(data[0]);
-                  
-              },
-              () =>
-             
-      //this.showAlert(
-      console.log(         "Unexpected Error",
-               "Failed to subscribe for changes, please try to re-connect."
-             )
-          );
-      
-    }
+  }
   /*********************************************
    *  TRADUCCION
    ***************************************/
-    onValueChange(buffer: ArrayBuffer) {
-      this.ngZone.run(() => {
-          try {
-            this.dataFromDevice= new Uint8Array(buffer);
-            this.pulsaciones = this.dataFromDevice[1];
-              //if (this.dataFromDevice == undefined)
-              //         this.dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");
+  onValueChange(buffer: ArrayBuffer) {
+    this.ngZone.run(() => {
+      try {
+        this.dataFromDevice = new Uint8Array(buffer);
+        this.pulsaciones = this.dataFromDevice[1];
+        //if (this.dataFromDevice == undefined)
+        //         this.dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");
 
-             // else this.dataFromDevice += ' ' + this.bytesToString(buffer).replace(/\s+/g, " ");
-              console.log("R:"+(this.pulsaciones)+"bpm" + "- "+this.dataFromDevice);
-  //console.log("datos leidos: " + this.dataFromDevice);
+        // else this.dataFromDevice += ' ' + this.bytesToString(buffer).replace(/\s+/g, " ");
+        console.log("R:" + (this.pulsaciones) + "bpm" + "- " + this.dataFromDevice);
+        //console.log("datos leidos: " + this.dataFromDevice);
         //Simply assign data to variable dataFromDevice and string concat
-                } catch (e) {
-                    console.log(e);
-                }
-            });
-        }
-        bytesToString(buffer) {
-          return String.fromCharCode.apply(null, new Uint8Array(buffer));
-        }
+      } catch (e) {
+        console.log(e);
+      }
+    });
+  }
+  bytesToString(buffer) {
+    return String.fromCharCode.apply(null, new Uint8Array(buffer));
+  }
+  /* no quitar*/
+  setMensajeEstado(message) {
+    console.log(message);
+    this.ngZone.run(() => {
+      this.mensajeEstado = message;
+    });
+    
+  }
 }

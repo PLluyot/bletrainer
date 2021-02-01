@@ -45,11 +45,15 @@ export class AboutPage implements OnInit {
    }
   scan() {
     this.bleTrainer.encenderBle();
-
+    var pruebaservicios: any[]=[];
+    //  ['1826','1827','1800'];
     this.devices = []; // clear list
     console.log("entra");
    // this.ngZone.run(() => {
-      this.devices=this.bleTrainer.scan(['1826','1827']);  
+      this.bleTrainer.scan(pruebaservicios).then(
+        (dispositivosEncontrados: any[]=[]) => this.devices=dispositivosEncontrados,
+        (error) => console.log(error)
+        );  
    // });
     
     //console.log("ppp:"+this.devices[0])
@@ -62,9 +66,11 @@ export class AboutPage implements OnInit {
   // }
   
   sendParam() {
+    console.log("aaaa----"+this.bleTrainer.devices[0].id);
     let paramRouter: NavigationExtras = {
       queryParams: {
         info: JSON.stringify(this.info)
+        //bleTrainer: this.bleTrainer
       }
     };
     this.router.navigate(['/home'], paramRouter);
