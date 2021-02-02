@@ -15,7 +15,8 @@ export class InfoBle {
         estado: "desconectado",
         color: "danger",
         servicio: "180d",
-        id: null,
+        id: null, 
+        // "E3:5E:65:14:16:33",
         caracteristica: "2a37",
         mac: null,
         dispositivos: []
@@ -76,19 +77,21 @@ export class InfoBle {
     // public dato: string = "pepe";
     //cambio estado
     cambiarEstado(componente: any) {
-        console.log("cambio de estado ANTES:" + componente + " - "+ componente.estado);
+        //console.log("cambio de estado ANTES:" + componente + " - "+ componente.estado);
         //verificamos si el componente existe
         if (componente) {
             if (componente.estado == "conectado") {
                 componente.estado = "desconectado";
-                componente.color = "danger"
+                componente.color = "danger";
+                
             }
             else {
                 componente.estado = "conectado";
                 componente.color = "success";
             }
+            console.log("infoBle: cambiamos estado del pulso a "+ componente.estado);
         }
-        console.log("cambio de estado DESPUES:" + componente + " - "+ componente.estado);
+        //console.log("cambio de estado DESPUES:" + componente + " - "+ componente.estado);
         
     }
     setInfo (newInfo: InfoBle) {

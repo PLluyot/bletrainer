@@ -146,11 +146,17 @@ export class BleTrainer {
 
     /* DESCONECTAR DISPOSITIVO */
     desconectarDispositivo(uuid: string) {
+        var seDesconecto:boolean=false;
         this.ble.isConnected(uuid).then(
-            () => { this.ble.disconnect(uuid).then(() => console.log("lo he desconectado")) },
+            () => { 
+                this.ble.disconnect(uuid).then(() =>{ 
+                    console.log("lo he desconectado");
+                    seDesconecto=true;
+                }) 
+            },
             () => console.log("tratando de desconectar pero el dispositivo no estaba conectado")
         )
-
+            return seDesconecto;
     }
     /************************************************************************************* */
     /* NOTIFICACIONES */
