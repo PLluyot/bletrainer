@@ -76,6 +76,7 @@ export class InfoBle {
     // public dato: string = "pepe";
     //cambio estado
     cambiarEstado(componente: any) {
+        console.log("cambio de estado ANTES:" + componente + " - "+ componente.estado);
         //verificamos si el componente existe
         if (componente) {
             if (componente.estado == "conectado") {
@@ -87,6 +88,7 @@ export class InfoBle {
                 componente.color = "success";
             }
         }
+        console.log("cambio de estado DESPUES:" + componente + " - "+ componente.estado);
         
     }
     setInfo (newInfo: InfoBle) {

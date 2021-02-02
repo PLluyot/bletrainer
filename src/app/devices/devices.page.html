@@ -14,7 +14,7 @@
       <ion-button (click)="scanConectarPulso()">TODO</ion-button>
       
       <!-- <ion-button (click)="escriboDato()">ESC</ion-button> -->
-      <ion-button (click)="bleTrainer.desconectarBle(info.pulso.id)">DESC</ion-button>
+      <ion-button (click)="bleTrainer.desconectarDispositivo(info.pulso.id)">DESC</ion-button>
 
       <!-- <ion-back-button defaultHref="/home"></ion-back-button>  -->
     </ion-buttons>
@@ -82,7 +82,7 @@
             
           </ion-buttons>
         </ion-item-divider>
-        <ion-item *ngFor="let device of info.pulso.dispositivos" color="light" (click)="bleTrainer.establecerConexionDispositivo(device, this.info.pulso)">
+        <ion-item *ngFor="let device of info.pulso.dispositivos" color="light" (click)="conectar(device, this.info.pulso)">
           <ion-label slot="start" color="primary">{{device.name || "--sin nombre--"}}</ion-label>
           <!-- <ion-label class=" ion-text-end ion-float-right uid">{{pulsaciones}}</ion-label> -->
           <ion-label class=" ion-text-end ion-float-right uid">{{device.id}}</ion-label>
