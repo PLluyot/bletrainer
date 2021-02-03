@@ -1,13 +1,13 @@
 import { CompileShallowModuleMetadata } from '@angular/compiler';
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone , ViewChild} from '@angular/core';
 import { ActivatedRoute } from '@angular/router'; //recibir
 import { Router, NavigationExtras } from '@angular/router'; //enviar
 //mis clases
 import { InfoBle } from '../info-ble';
 import { BleTrainer} from '../ble-trainer';
 
-//pruebas con BLE
-// import { BLE } from '@ionic-native/ble/ngx';
+//pruebas con chars
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-about',
@@ -17,8 +17,12 @@ import { BleTrainer} from '../ble-trainer';
 export class AboutPage implements OnInit {
   // private info: InfoBle;
   private devices : any[] =[];
+  @ViewChild('barChart') barChart;
+  bars: any;
+  colorArray: any;
  // private bleTrainer: BleTrainer; 
   // private aboutZone: NgZone;
+  private pruebaValor:number=100;
 
   constructor(private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -38,36 +42,47 @@ export class AboutPage implements OnInit {
     );
   }
   ionViewDidEnter() {
-    
+    this.createBarChart();
    }
+   createBarChart() {
+    this.bars = new Chart(this.barChart.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: ['Pulso', 'Cadencia', 'Velocidad', 'Potencia', 'FTP'],
+        datasets: [{
+          label: 'Viewers in millions',
+          data: [this.pruebaValor, 134, 22, 132, 67],
+          backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+          borderColor: 'rgb(38, 194, 129)',// array should have same number of elements as number of dataset
+          borderWidth: 1
+        },{
+          label: 'Viewers in millions2',
+          data: [180, 80, 19, 180, 30],
+          backgroundColor: ["lightred","blue","yellow"],// array should have same number of elements as number of dataset
+          borderColor: 'rgb(38, 194, 129)',// array should have same number of elements as number of dataset
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }],
+          xAxes:[{
+            stacked: true
+          }] 
+        }
+      }
+    });
+  }
    
    ngOnInit() {
    }
-  scan() {
-    this.bleTrainer.encenderBle();
-    var pruebaservicios: any[]=[];
-    //  ['1826','1827','1800'];
-    this.devices = []; // clear list
-    console.log("entra");
-   // this.ngZone.run(() => {
-      this.bleTrainer.scan(pruebaservicios).then(
-        (dispositivosEncontrados: any[]=[]) => this.devices=dispositivosEncontrados,
-        (error) => console.log(error)
-        );  
-   // });
-    
-    //console.log("ppp:"+this.devices[0])
-    // this.ble.connect('E3:5E:65:14:16:33')
-  }
-  // onDeviceDiscovered(device){
-  //   this.ngZone.run(() => {
-  //     this.devices.push(device);
-  //   });
-  // }
-  
+   
   sendParam() {
-    console.log("aaaa----"+this.bleTrainer.devices[0].id);
-    let paramRouter: NavigationExtras = {
+     let paramRouter: NavigationExtras = {
       queryParams: {
         info: JSON.stringify(this.info)
         //bleTrainer: this.bleTrainer
