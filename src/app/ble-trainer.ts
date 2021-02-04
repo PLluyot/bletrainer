@@ -72,7 +72,7 @@ export class BleTrainer {
         console.log("tratamos de comprobar la conexion con :" + objetoConexion.id);
         if (objetoConexion && objetoConexion.id) {
             
-            await this.estaConectado(objetoConexion.id).then((res)=>conectado=res);
+            conectado= await this.estaConectado(objetoConexion.id);
             //si el dispositivo NO está conectado
             if (!conectado){
                 console.log("estaba desconectado");
@@ -94,10 +94,10 @@ export class BleTrainer {
         }else
         console.log("Error en la función establecerConexionDispositivo, mal objeto objetoConexion");
         
-        await this.estaConectado(objetoConexion.id); //devolvemos si está o no conectado
+        conectado= await this.estaConectado(objetoConexion.id);
         return conectado;
     }
-    async conectarDispositivo(device: any, objetoConIdActual?: any) {
+    conectarDispositivo(device: any, objetoConIdActual?: any) {
         console.log("nos conectamos a :" + device.id);
         if (device && device.id) {
             // actualizamos el id del objeto
