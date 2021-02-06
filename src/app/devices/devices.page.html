@@ -9,25 +9,25 @@
         <ion-icon name="heart"></ion-icon> 
       </ion-button> -->
       <ion-button (click)="sendParam()">
-        <ion-icon name="navigate" slot="start"></ion-icon>Atras</ion-button>
+        <ion-icon name="chevron-back-outline"></ion-icon></ion-button>
       <ion-button (click)="leerPulso(info.pulso)">LEER</ion-button>
-     
+      <ion-button (click)="leerBici(info.bici)">bic</ion-button>
       
       <!-- <ion-button (click)="escriboDato()">ESC</ion-button> -->
-      <ion-button (click)="bleTrainer.desconectarDispositivo(info.pulso.id)">DESC</ion-button>
-
+      <ion-button (click)="bleTrainer.desconectarDispositivo(info.pulso.id)">D-P</ion-button>
+      <ion-button (click)="bleTrainer.desconectarDispositivo(info.bici.id)">D-B</ion-button>
       <!-- <ion-back-button defaultHref="/home"></ion-back-button>  -->
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" no-padding no-margin>
-  <ion-item>
+  <!-- <ion-item>
     <ion-buttons>
       <ion-button (click)="apagarBle()">Apagar BLE</ion-button>
       <ion-button (click)="encenderBle()">Encender BLE</ion-button>
     </ion-buttons>
-  </ion-item>
+  </ion-item> -->
   <ion-card>
     <ion-list>
       <ion-list-header color="dark">
@@ -46,7 +46,7 @@
             </ion-button>
           </ion-buttons>
         </ion-item-divider>
-        <ion-item *ngFor="let device of info.bici.dispositivos" color="light" (click)="bleTrainer.establecerConexionDispositivo(device, this.info.bici.id)">
+        <ion-item *ngFor="let device of info.bici.dispositivos" color="light" (click)="conectar(device, info.bici)">
           <!-- <ion-card *ngFor="let device of devices" color="light" (click)="deviceSelected(device)">
             <ion-card-header> -->
               <!-- <ion-card-title> -->
@@ -82,14 +82,14 @@
             
           </ion-buttons>
         </ion-item-divider>
-        <ion-item *ngFor="let device of info.pulso.dispositivos" color="light" (click)="conectar(device, this.info.pulso)">
+        <ion-item *ngFor="let device of info.pulso.dispositivos" color="light" (click)="conectar(device, info.pulso)">
           <ion-label slot="start" color="primary">{{device.name || "--sin nombre--"}}</ion-label>
           <!-- <ion-label class=" ion-text-end ion-float-right uid">{{pulsaciones}}</ion-label> -->
           <ion-label class=" ion-text-end ion-float-right uid">{{device.id}}</ion-label>
         </ion-item>
       </ion-item-group>
       <!-- /* pruebas -->
-      <ion-item-group>
+       <ion-item-group>
         <ion-item-divider color="warning">
 
           <ion-label slot="start">TODO</ion-label>
@@ -108,7 +108,7 @@
           
           <ion-label class=" ion-text-end ion-float-right uid">{{device.id}}</ion-label>
         </ion-item>
-      </ion-item-group>
+      </ion-item-group> 
       
       </ion-list>
     <ion-label class="ion-text-center">Selecciona un dispositivo para conectarte</ion-label>

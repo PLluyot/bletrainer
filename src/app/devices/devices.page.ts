@@ -56,6 +56,7 @@ export class DevicesPage implements OnInit {
       if (params && params.info) {
         this.info = JSON.parse(params.info);
         this.info = new InfoBle(this.info.bici, this.info.pulso);
+        console.log("(1-devices) Entramos en la página y pintamos info.bici"+JSON.stringify(this.info.bici));
       }
     }
     );
@@ -94,15 +95,18 @@ export class DevicesPage implements OnInit {
   /*****************CONECTAR************* 
    * conectamos a un ble y cambiamos el estado.
    * *****************************************/
-  async conectar(device: any, objetoConIdActual?: any) {
-    console.log("DEVICES-CONECTAR");
+  async conectar(device: any, objetoConIdActual: any) {
+    console.log("DEVICES-CONECTAR-1: device:"+JSON.stringify(device));
+    console.log("DEVICES-CONECTAR-2: objetoConIdActual:"+JSON.stringify(objetoConIdActual));
     var estaConectado: boolean = false;
     // console.log("estado una vez llamado a conectar ANTES:" + objetoConIdActual.estado);
 
     estaConectado = await this.bleTrainer.establecerConexionDispositivo(device, objetoConIdActual);
     if (estaConectado && objetoConIdActual.nombre=="Pulsómetro")
-    await this.leerPulso(device);
-    
+    await this.leerPulso(objetoConIdActual);
+    if (estaConectado && objetoConIdActual.nombre=="Bicicleta")
+    await this.leerBici(objetoConIdActual);
+
     console.log("CAMBIAMOS EL ESTADO. Está conectado? " + estaConectado);
     
     if ((estaConectado && objetoConIdActual.estado == "desconectado") ||
@@ -116,9 +120,16 @@ export class DevicesPage implements OnInit {
   //      PULSO Y CADENCIA Y VELOCIDAD
   /************************************************************ */
   leerPulso(device: any) { //device :any){
-    console.log("DEVICES-LEERPULSO");
+    console.log("DEVICES-LEERPULSO :" + device.nombre);
     var pulso: any;
     console.log("entramos en leer pulso");
+    this.bleTrainer.subscribirNotificacion(device, device.servicio, device.caracteristica);
+
+  }
+  leerBici(device: any) { //device :any){
+    console.log("DEVICES-LEERBICI :" + device.nombre);
+    var cadencia: any;
+    console.log("entramos en leer bici");
     this.bleTrainer.subscribirNotificacion(device, device.servicio, device.caracteristica);
 
   }
@@ -161,11 +172,11 @@ export class DevicesPage implements OnInit {
   }
 
 
-  desconectar(deviceId: string) {
-    this.ble.isConnected(deviceId).then(() =>
-      this.ble.disconnect(deviceId).then(() => console.log("lo he desconectado")))
+  // desconectar(deviceId: string) {
+  //   this.ble.isConnected(deviceId).then(() =>
+  //     this.ble.disconnect(deviceId).then(() => console.log("lo he desconectado")))
 
-  }
+  // }
 
   // escriboDato() {
   //   var inputdata = new Uint8Array(3);
@@ -195,67 +206,67 @@ export class DevicesPage implements OnInit {
   //     )
   // }
   /*************************************************************** */
-  encenderBle() {
-    this.ble.enable().then(
-      () => console.log("enciendo BLE")
-      ,
-      () => console.log("error al encender")
-    );
+  // encenderBle() {
+  //   this.ble.enable().then(
+  //     () => console.log("enciendo BLE")
+  //     ,
+  //     () => console.log("error al encender")
+  //   );
 
-  }
+  // }
 
 
   /************************************** */
   /****************************************** */
-  subscribe() {
+//   subscribe() {
 
-    this.ble
-      .startNotification(this.info.pulso.id,
-        this.info.pulso.servicio, this.info.pulso.caracteristica)
-      .subscribe(
-        data => {
-          // console.log("aqui"+data[0]);
-          this.onValueChange(data[0]);
+//     this.ble
+//       .startNotification(this.info.pulso.id,
+//         this.info.pulso.servicio, this.info.pulso.caracteristica)
+//       .subscribe(
+//         data => {
+//           // console.log("aqui"+data[0]);
+//           this.onValueChange(data[0]);
 
-        },
-        () =>
+//         },
+//         () =>
 
-          //this.showAlert(
-          console.log("Unexpected Error",
-            "Failed to subscribe for changes, please try to re-connect."
-          )
-      );
+//           //this.showAlert(
+//           console.log("Unexpected Error",
+//             "Failed to subscribe for changes, please try to re-connect."
+//           )
+//       );
 
-  }
-  /*********************************************
-   *  TRADUCCION
-   ***************************************/
-  onValueChange(buffer: ArrayBuffer) {
-    this.ngZone.run(() => {
-      try {
-        this.dataFromDevice = new Uint8Array(buffer);
-        this.pulsaciones = this.dataFromDevice[1];
-        //if (this.dataFromDevice == undefined)
-        //         this.dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");
+//   }
+//   /*********************************************
+//    *  TRADUCCION
+//    ***************************************/
+//   onValueChange(buffer: ArrayBuffer) {
+//     this.ngZone.run(() => {
+//       try {
+//         this.dataFromDevice = new Uint8Array(buffer);
+//         this.pulsaciones = this.dataFromDevice[1];
+//         //if (this.dataFromDevice == undefined)
+//         //         this.dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");
 
-        // else this.dataFromDevice += ' ' + this.bytesToString(buffer).replace(/\s+/g, " ");
-        console.log("R:" + (this.pulsaciones) + "bpm" + "- " + this.dataFromDevice);
-        //console.log("datos leidos: " + this.dataFromDevice);
-        //Simply assign data to variable dataFromDevice and string concat
-      } catch (e) {
-        console.log(e);
-      }
-    });
-  }
-  bytesToString(buffer) {
-    return String.fromCharCode.apply(null, new Uint8Array(buffer));
-  }
-  /* no quitar*/
-  setMensajeEstado(message) {
-    console.log(message);
-    this.ngZone.run(() => {
-      this.mensajeEstado = message;
-    });
+//         // else this.dataFromDevice += ' ' + this.bytesToString(buffer).replace(/\s+/g, " ");
+//         console.log("R:" + (this.pulsaciones) + "bpm" + "- " + this.dataFromDevice);
+//         //console.log("datos leidos: " + this.dataFromDevice);
+//         //Simply assign data to variable dataFromDevice and string concat
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     });
+//   }
+//   bytesToString(buffer) {
+//     return String.fromCharCode.apply(null, new Uint8Array(buffer));
+//   }
+//   /* no quitar*/
+//   setMensajeEstado(message) {
+//     console.log(message);
+//     this.ngZone.run(() => {
+//       this.mensajeEstado = message;
+//     });
 
-  }
+//   }
 }

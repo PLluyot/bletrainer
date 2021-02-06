@@ -37,14 +37,40 @@
   //  min-height:150px;
   
 //}
-ion-card-content, ion-col{
-  margin: 0 !important;
-  padding: 0 !important;
-}
-ion-col img, ion-col ion-card-subtitle{
-  padding-top:10px;
-}
+//  ion-card, ion-grid, ion-col {
+//    margin: 0 !important;
+//    padding: 0 !important;
+//  }
+// ion-card{
+//   margin: 2px !important;
+//   padding: 0 !important;
+// }
+// ion-col img, ion-col ion-card-subtitle{
+//   padding-top:10px;
+// }
 h1.dispositivoValor{
   text-align:center;
   // font-size:10em;
+}
+.grande {
+  font-size:3em;
+  line-height:40px !important;
+  margin-bottom:0 !important;
+  padding-bottom:0 !important;
+}
+
+// ion-grid ion-row{
+//   display:flex !important;
+//   flex-direction: column;
+//   background-color: red;
+//   margin:10px;
+//   align-items: flex-start !important;
+//   justify-content: flex-start !important;
+// }
+.p1 {
+  font-size:0.8rem;
+}
+ion-card {
+  margin:0;
+  
 }

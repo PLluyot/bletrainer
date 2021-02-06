@@ -5,6 +5,11 @@ export class BleTrainer {
     public devices: any[] = [];
     public peripheral: any = {};
     public pulsaciones: any;
+    public cadencia : any;
+    public biciNivel: any;
+    public biciVel: any;
+    public biciVelMed: any;
+    public power;
 
     public ble: BLE;
     public zona: NgZone;
@@ -13,6 +18,10 @@ export class BleTrainer {
         this.ble = new BLE();
         this.zona = new NgZone({});
         this.pulsaciones = 0;
+        this.biciNivel = null;
+        this.biciVel = null;
+        this.biciVelMed = null;
+        this.power=0;
     }
     /* ENCENDER BLE */
     encenderBle() {
@@ -67,14 +76,15 @@ export class BleTrainer {
     /* si está conectado a objetoConexion, no hacemos nada
     /* si no lo está usamos el id objetoConIdActual para conectarnos y acrtualiza objetoConexion */
 
-    async  establecerConexionDispositivo(objetoConexion: any, objetoConIdActual?: any) {
+    async establecerConexionDispositivo(objetoConexion: any, objetoConIdActual: any) {
         var conectado: boolean = false;
+        console.log("ENRTAMOS segundo paramerto:" +objetoConIdActual);
         console.log("tratamos de comprobar la conexion con :" + objetoConexion.id);
         if (objetoConexion && objetoConexion.id) {
-            
-            conectado= await this.estaConectado(objetoConexion.id);
+
+            conectado = await this.estaConectado(objetoConexion.id);
             //si el dispositivo NO está conectado
-            if (!conectado){
+            if (!conectado) {
                 console.log("estaba desconectado");
                 // if (objetoConIdActual.id && objetoConexion.id != objetoConIdActual.id) {
                 //     objetoConIdActual.id = objetoConexion.id; // actualizo el id del objeto pasado
@@ -83,48 +93,101 @@ export class BleTrainer {
                 // } else{
                 //     console.log("no actualizamos el id porque ya lo tenía bien ")
                 // }
-                
-                await this.conectarDispositivo(objetoConexion, objetoConIdActual); //conectamos
+
+                conectado = await this.conectarDispositivo(objetoConexion, objetoConIdActual); //conectamos
                 // dentro de la funcion cambiamos el estado
+                console.log("(BLE) conectarDispositivo devuelve -->" + conectado + " (dentro de establecerConexionDispositivo) ");
             }
             else {
                 console.log("PPP: El dispositivo ya estaba conectado");
             }
-            
-        }else
-        console.log("Error en la función establecerConexionDispositivo, mal objeto objetoConexion");
-        
-        conectado= await this.estaConectado(objetoConexion.id);
+
+        } else
+            console.log("Error en la función establecerConexionDispositivo, mal objeto objetoConexion");
+
+        ///////// conectado= await this.estaConectado(objetoConexion.id);
         return conectado;
     }
-    conectarDispositivo(device: any, objetoConIdActual?: any) {
-        console.log("nos conectamos a :" + device.id);
+    async conectarDispositivo(device: any, objetoConIdActual?: any) {
+        console.log("00: nos conectamos a :" + device.id + " y actualizamos el objetoConIdActual" + objetoConIdActual.nombre);
+        var resultado: boolean = false;
         if (device && device.id) {
             // actualizamos el id del objeto
-            this.ble.connect(device.id).subscribe(
-                peripheral => {
-                    console.log("A"); 
-                    this.dispositivoConectado(peripheral);
-                    if (objetoConIdActual){
-                        objetoConIdActual.estado = "conectado"; //no es correcto
-                        objetoConIdActual.color = "success";
-                        objetoConIdActual.id=device.id;
+            resultado = await new Promise(resolve =>
+                this.ble.connect(device.id).subscribe(
+                    peripheral => {
+
+                        this.dispositivoConectado(peripheral);
+                        if (objetoConIdActual) {
+                            objetoConIdActual.estado = "conectado"; //no es correcto
+                            objetoConIdActual.color = "success";
+                            objetoConIdActual.id = device.id;
+                            console.log("ver objetoConIdActual: id->" + objetoConIdActual.id);
+
+                        }
+                        console.log("AA");
+                        resolve(true);
+
+                    },
+                    peripheral => {
+                        console.log("dispositivo desconectado");
+                        if (objetoConIdActual) {
+                            objetoConIdActual.estado = "desconectado"; //no es correcto
+                            objetoConIdActual.color = "danger";
+
+                        }
+                        console.log("BB");
+                        resolve(false);
+
+                        //this.dispositivoDesconectado(peripheral) 
                     }
-                    
-                },
-                peripheral => {
-                    console.log("dispositivo desconectado");
-                    if (objetoConIdActual){
-                        objetoConIdActual.estado = "desconectado"; //no es correcto
-                        objetoConIdActual.color = "danger";
-                    }
-                    //this.dispositivoDesconectado(peripheral) 
-                }
+
+                )
+
             );
 
+
+            // this.ble.connect(device.id).subscribe(
+            //     peripheral => {
+
+            //         this.dispositivoConectado(peripheral);
+            //         if (objetoConIdActual){
+            //             objetoConIdActual.estado = "conectado"; //no es correcto
+            //             objetoConIdActual.color = "success";
+            //             objetoConIdActual.id=device.id;
+            //             console.log("ver objetoConIdActual: id->"+objetoConIdActual.id);
+
+            //         }
+            //         console.log("AA");
+
+
+            //     },
+            //     peripheral => {
+            //         console.log("dispositivo desconectado");
+            //         if (objetoConIdActual){
+            //             objetoConIdActual.estado = "desconectado"; //no es correcto
+            //             objetoConIdActual.color = "danger";
+
+            //         }
+            //         console.log("BB");
+            //         resultado= false;
+
+            //         //this.dispositivoDesconectado(peripheral) 
+            //     }
+
+            // );
+
+
         }
-        else
-            console.log("conectarDispositivo: Error al pasar el id del dispositivo a conectar");
+        else {
+            console.log("CC: conectarDispositivo: Error al pasar el id del dispositivo a conectar");
+            
+        }
+        console.log("DD: antes de devolver vale-->" + resultado);
+        return resultado;
+
+
+
     }
 
     dispositivoConectado(peripheral) {
@@ -133,6 +196,7 @@ export class BleTrainer {
         });
         console.log('dispositivoConectado ' + JSON.stringify(this.peripheral));
         //actualizamos el estado 
+
     }
 
     /*async dispositivoDesconectado(peripheral) {
@@ -146,29 +210,29 @@ export class BleTrainer {
 
     /* DESCONECTAR DISPOSITIVO */
     desconectarDispositivo(uuid: string) {
-        var seDesconecto:boolean=false;
+        var seDesconecto: boolean = false;
         this.ble.isConnected(uuid).then(
-            () => { 
-                this.ble.disconnect(uuid).then(() =>{ 
+            () => {
+                this.ble.disconnect(uuid).then(() => {
                     console.log("lo he desconectado");
-                    seDesconecto=true;
-                }) 
+                    seDesconecto = true;
+                })
             },
             () => console.log("tratando de desconectar pero el dispositivo no estaba conectado")
         )
-            return seDesconecto;
+        return seDesconecto;
     }
     /************************************************************************************* */
     /* NOTIFICACIONES */
-    async pararNotificacion(){
+    async pararNotificacion() {
         this.ble.stopStateNotifications().then(
-            ()=>console.log("paramos las notificaciones"),
-            ()=>console.log("error al parar las notificaciones")
+            () => console.log("paramos las notificaciones"),
+            () => console.log("error al parar las notificaciones")
         );
     }
     subscribirNotificacion(device: any, servicio: string, caract: string) { //device = pulso o bici
-        console.log("tratando de notificar pulso: "+device.id+" S:"+ servicio+" C:"+ caract);
-        
+        console.log("tratando de notificar bici: " + device.nombre + " - " + device.id + " S:" + servicio + " C:" + caract);
+
         if (device && device.id) {
             this.ble
                 .startNotification(device.id,
@@ -176,7 +240,10 @@ export class BleTrainer {
                     caract)
                 .subscribe(
                     data => {
-                        this.onValueChange(data[0]);
+                        if (device.nombre=="Pulsómetro")
+                            this.onValueChange(data[0], device);
+                        else
+                            this.onValueChange(data[0], device);
                     },
                     // () =>//this.showAlert(
                     //     console.log("Unexpected Error",
@@ -190,18 +257,41 @@ export class BleTrainer {
         else
             console.log("no podemos subscribirnos, parametros incorrectos");
     }
-    onValueChange(buffer: ArrayBuffer) { //hay que meter en la zona asíncrona
+    onValueChange(buffer: ArrayBuffer, device:any) { //hay que meter en la zona asíncrona
         var dataFromDevice: any;
         this.zona.run(() => {
             try {
-                dataFromDevice = new Uint8Array(buffer);
-               //if (this.pulsaciones != dataFromDevice[1])
+                //console.log("entra en valuechange " + device.nombre);
+                //if (this.pulsaciones != dataFromDevice[1])
+                if (device.nombre=="Pulsómetro") {
+                    dataFromDevice = new Uint8Array(buffer);
                     this.pulsaciones = dataFromDevice[1];
-                //if (this.dataFromDevice == undefined)
-                //         this.dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");
+                }
+                else {
+                    console.log("ENTRA");
+                    dataFromDevice = new Uint8Array(buffer);
+                    //dataFromDevice = String.fromCharCode.apply(null, new Uint8Array(buffer));
+                    //console.log("16 datos A-->"+JSON.stringify(dataFromDevice));
+                     console.log("datos0-->"+dataFromDevice);
+                    
+                     device.arrayLectura = dataFromDevice;
+                    this.biciNivel=(dataFromDevice[9]+dataFromDevice[10]*256)/10;
+                    this.biciVel = (dataFromDevice[2]+dataFromDevice[3]*256)/100;
+                    this.biciVelMed = (dataFromDevice[7]); 
+                    this.cadencia = (dataFromDevice[4]+dataFromDevice[5]*256)/2;
+                    this.power = (dataFromDevice[11]+dataFromDevice[12]*256);
 
-                // else this.dataFromDevice += ' ' + this.bytesToString(buffer).replace(/\s+/g, " ");
-                console.log("R:" + (this.pulsaciones) + "bpm" + "- " + dataFromDevice);
+                    //this.cadencia= dataFromDevice;
+                    // if (dataFromDevice == undefined)
+                    //     dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");
+                    // else dataFromDevice += ' ' + this.bytesToString(buffer).replace(/\s+/g, " ");
+                   // 84 --> 10000100
+                }
+                
+                //console.log("R:" + (this.pulsaciones) + "bpm" + "- " + dataFromDevice);
+                //console.log("R:---" + "- " + dataFromDevice[1]);
+               
+               
                 //console.log("datos leidos: " + this.dataFromDevice);
                 //Simply assign data to variable dataFromDevice and string concat
             } catch (e) {

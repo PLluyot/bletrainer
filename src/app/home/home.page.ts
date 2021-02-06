@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, OnChanges, SimpleChanges } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router, NavigationExtras } from '@angular/router';
 
@@ -26,7 +26,19 @@ export class HomePage {
   }
   ionViewWillEnter() {
     this.getParam();
-    // this.conectar(this.info.pulso);
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    for (let propName in changes) {  
+      let change = changes[propName];
+      let curVal  = JSON.stringify(change.currentValue);
+      let prevVal = JSON.stringify(change.previousValue);
+    
+            console.log("CAMBIO: "+ prevVal + " nuevovalor: "+curVal);
+            
+         }
+  }
+  registrarPulso(){
+    console.log(this.bleTrainer.pulsaciones);
   }
   /************************************************ */
   /* función conectar
@@ -55,7 +67,7 @@ export class HomePage {
       //seConecto = true;//estaba conectado
       //leer el pulso
       if (device.nombre == "Pulsómetro") await this.leerPulso(device);
-      else console.log("IMPLEMENTAR LECTURA BICI");
+      else await this.leerBicicleta(device);
     }
     else { //en otro caso nos conectamos
       if (device.id) //si tenemos un device.id
@@ -66,6 +78,7 @@ export class HomePage {
         console.log("home 1 - estado" + conectado);
         
         if (conectado && device.nombre == "Pulsómetro") await this.leerPulso(device);
+        if (conectado && device.nombre == "Bicicleta") await this.leerBicicleta(device);
       
       } else { //si NO tenemos un device.id
         console.log("llamamos a la página device");
@@ -95,16 +108,10 @@ export class HomePage {
       //establecemos la conexión
       const seHaConectado =  await this.conectar(dispositivo);
       console.log("resultado de seha conectado"+ seHaConectado);
-      if (seHaConectado==true) this.info.cambiarEstado(dispositivo)
+      // if (seHaConectado) this.info.cambiarEstado(dispositivo)
+      // else this.sendParam('devices');
+      if (seHaConectado) this.info.ponerEstado(dispositivo,"conectado")
       else this.sendParam('devices');
-      
-      // .then(
-      //   (seHaConectado) => { // SE LLAMA A CONECTAR estando DESCONECTADO
-      //     if (seHaConectado) //si se ha podido conectar cambiamos el estado a conectado
-      //       this.info.cambiarEstado(dispositivo)
-      //     else // si no nos hemos podido conectar,  redirigimos a devices
-      //       this.sendParam('devices');
-      //   });
 
     } else {
       //desconectamos el dispositivo en el caso de estar conectado
@@ -113,9 +120,8 @@ export class HomePage {
         var resultado = await this.bleTrainer.desconectarDispositivo(dispositivo.id); //FALLA
         console.log("home - 2 - hemos llamado a desconectar el dispositivo con resultado: " + resultado);
         // y cambiamos su estado (clase InfoBle)
-        this.info.cambiarEstado(dispositivo);
-      } else
-        console.log("home - 2 - No hay cambio de estado;");
+        this.info.ponerEstado(dispositivo,"desconectado");
+      };
     }
   }
   /************************************************ */
@@ -129,6 +135,10 @@ export class HomePage {
     console.log("home 3- leer pulso - entramos en leer pulso");
     this.bleTrainer.subscribirNotificacion(device, device.servicio, device.caracteristica);
   }
+  leerBicicleta(device:any){
+    console.log("home 3- leer bici - entramos en leer bici :" + device.nombre );
+    this.bleTrainer.subscribirNotificacion(device, device.servicio, device.caracteristica);
+  }
 
   //recuperamos los parámetros de otra ventana y actualizamos el objeto InfoBle
   getParam() {
@@ -136,6 +146,7 @@ export class HomePage {
       if (params && params.info) {
         this.info = JSON.parse(params.info);
         this.info = new InfoBle(this.info.bici, this.info.pulso);
+        console.log("(1-home) Entramos en la página y pintamos info.bici"+JSON.stringify(this.info.bici));
       }
     }
     );
