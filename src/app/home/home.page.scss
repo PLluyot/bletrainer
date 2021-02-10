@@ -79,3 +79,15 @@ ion-card-title {
   font-size:2rem;
   color:rgb(54, 51, 65);
 }
+canvas.small{
+
+  width:10px !important;
+  height:80px !important;
+
+}
+ion-icon.bigger{
+  font-size:1.2rem;
+}
+ion-toolbar ion-item{
+  line-height:10px;
+}

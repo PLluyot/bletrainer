@@ -17,28 +17,52 @@
 
 <ion-content fullscreen>
   <ion-grid>
-    <ion-row class="ion-text-center ion-align-items-end">
+    <ion-row class="ion-text-center ion-align-items-center">
       <ion-col size="3" (click)="cambiarEstado(info.pulso)">
+        
+
         <ion-label><small>{{info.pulso.nombre}}</small></ion-label><br>
         <img width="27%" src="./assets/img/heart.png" />
         <ion-card no-margin>
-          <ion-card-title>{{bleTrainer.pulsaciones}}<span class="p1"> bpm</span></ion-card-title>
+          <ion-card-title>{{bleTrainer.pulsacion}}<span class="p1"> bpm</span></ion-card-title>
         </ion-card>
         <ion-label class="p1" color="{{info.pulso.color}}"><small>{{info.pulso.estado}}</small>
         </ion-label>
 
       </ion-col>
-      <ion-col size="6" color="dark" class="ion-align-items-start"><img width="80%" src="./assets/img/ds60.jpg" alt="logo"><br>
+      <ion-col  size="0.5">
+        <canvas baseChart  class="small"
+        [datasets]="this.chartPulso.chartData" 
+        [labels]="this.chartPulso.chartLabels" 
+        [options]="this.chartPulso.chartOptions" 
+        [colors]="this.chartPulso.chartColors"
+        [legend]="this.chartPulso.showLegend" 
+        [chartType]="this.chartPulso.chartType">
+        </canvas>
+      </ion-col>
+      <ion-col size="5" color="dark" class="ion-align-items-start"><img width="80%" src="./assets/img/ds60.jpg"
+          alt="logo"><br>
         <!-- <ion-label>DS-60</ion-label> -->
       </ion-col>
-
-      <ion-col size="3" (click)="cambiarEstado(info.bici)">
+      <ion-col  size="0.5">
+        <canvas baseChart class="small"
+        [datasets]="this.chartNivel.chartData" 
+        [labels]="this.chartNivel.chartLabels" 
+        [options]="this.chartNivel.chartOptions" 
+        [colors]="this.chartNivel.chartColors"
+        [legend]="this.chartNivel.showLegend" 
+        [chartType]="this.chartNivel.chartType">
+        </canvas>
+      </ion-col>
+      <ion-col size="3">
         <ion-label><small>{{info.bici.nombre}}</small></ion-label><br>
-        <img width="27%" src="./assets/img/bici.png" />
-        <ion-card no-margin>
+        <ion-icon name="remove-circle-outline" class="bigger" (click)="bajarNivel()"></ion-icon>
+        <img width="27%" src="./assets/img/bici.png" /><ion-label></ion-label>
+        <ion-icon name="add-circle-outline" class="bigger" (click)="subirNivel()"></ion-icon>
+        <ion-card no-margin (click)="cambiarEstado(info.bici)">
           <ion-card-title><span class="p1">Nivel: </span>{{bleTrainer.biciNivel || 0}}</ion-card-title>
-        </ion-card>
-        <ion-label class="p1" color="{{info.bici.color}}"><small>{{info.bici.estado}}</small>
+        </ion-card >
+        <ion-label class="p1" color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)"><small>{{info.bici.estado}}</small>
         </ion-label>
 
 
@@ -83,20 +107,52 @@
       </ion-col>
 
     </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <canvas  baseChart 
+        [datasets]="this.chartTrack.chartData" 
+        [labels]="this.chartTrack.chartLabels" 
+        [options]="this.chartTrack.chartOptions" 
+        [colors]="this.chartTrack.chartColors"
+        [legend]="this.chartTrack.showLegend" 
+        [chartType]="this.chartTrack.chartType">
+        </canvas>
+      </ion-col>
+    </ion-row><ion-row>
+    <ion-col  size="0.5">
+      <canvas baseChart class="small"
+      [datasets]="this.chartNivel.chartData" 
+      [labels]="this.chartNivel.chartLabels" 
+      [options]="this.chartNivel.chartOptions" 
+      [colors]="this.chartNivel.chartColors"
+      [legend]="this.chartNivel.showLegend" 
+      [chartType]="this.chartNivel.chartType">
+      </canvas>
+    </ion-col></ion-row>
+    <ion-row>
+      <ion-col>
+       <ion-buttons>
+         <ion-button (click)="escribirBici()">WRITE</ion-button>
+         <ion-button (click)="movergraf()">MOVER</ion-button>
+       </ion-buttons>
+      </ion-col>
+    </ion-row>
   </ion-grid>
   <!-- otro -->
   
-
+    
+  
 </ion-content>
 <ion-footer>
-  <ion-item lines="none">
+  <ion-toolbar class="ion-text-center">
     <ion-icon name="bicycle"></ion-icon>
-    <ion-label color="primary">&nbsp;<small>App creada con IONIC-4 by P.Lluyot</small>
+    <ion-label color="primary">&nbsp;<small>P.Lluyot - 2021</small>
     </ion-label>
-  </ion-item>
-  <ion-toolbar>
+
     <ion-item color="dark">
       <ion-label class="ion-text-center">{{mensajeEstado}}</ion-label>
     </ion-item>
+    
   </ion-toolbar>
 </ion-footer>

@@ -1,9 +1,13 @@
-import { Component, OnInit, NgZone, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core'; //, OnChanges, SimpleChanges 
 import { ActivatedRoute } from '@angular/router';
 import { Router, NavigationExtras } from '@angular/router';
 
 import { InfoBle } from '../info-ble';
 import { BleTrainer } from '../ble-trainer';
+//pruebas con chars
+import { InfoCharts } from '../info-charts';
+import { timer } from 'rxjs';
+
 
 @Component({
   selector: 'app-home',
@@ -13,33 +17,43 @@ import { BleTrainer } from '../ble-trainer';
 export class HomePage {
 
   private mensajeEstado: string = "";
+  private chartPulso: InfoCharts;
+  public chartNivel: InfoCharts;
+  private chartTrack: InfoCharts;
+  private nivelBici = 0;
+  ////private numeros=timer(3000,10000);
 
   constructor(
     private info: InfoBle, //IMPLEMENTACION CLASE
     private bleTrainer: BleTrainer, //IMPLEMENTACION CLASE
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private ngZone: NgZone
-  ) {
+    private ngZone: NgZone) {
+      this.chartPulso = new InfoCharts("pulso");
+      this.chartNivel = new InfoCharts("nivel");
+      this.chartTrack = new InfoCharts("track");
   }
   ngOnInit() {
+///this.numeros.subscribe(x => console.log(x));
   }
   ionViewWillEnter() {
     this.getParam();
-  }
-  ngOnChanges(changes: SimpleChanges) {
-    for (let propName in changes) {  
-      let change = changes[propName];
-      let curVal  = JSON.stringify(change.currentValue);
-      let prevVal = JSON.stringify(change.previousValue);
+    //metemos una zona asincrona, el valor del nivel de la bici para que lo pinte en la gráfica
     
-            console.log("CAMBIO: "+ prevVal + " nuevovalor: "+curVal);
-            
-         }
+    //console.log(this.chartNivel.chartData);
   }
-  registrarPulso(){
-    console.log(this.bleTrainer.pulsaciones);
-  }
+  // ngOnChanges(changes: SimpleChanges) {
+  //   for (let propName in changes) {
+  //     let change = changes[propName];
+  //     let curVal = JSON.stringify(change.currentValue);
+  //     let prevVal = JSON.stringify(change.previousValue);
+
+  //     console.log("CAMBIO: " + prevVal + " nuevovalor: " + curVal);
+
+  //   }
+  // }
+
+
   /************************************************ */
   /* función conectar
   /* params:  device --> recibe un dispositivo (bici, pulso) que contiene la propiedad id
@@ -76,16 +90,16 @@ export class HomePage {
         //return (this.bleTrainer.establecerConexionDispositivo(device, device));
         conectado = await this.bleTrainer.establecerConexionDispositivo(device, device);
         console.log("home 1 - estado" + conectado);
-        
+
         if (conectado && device.nombre == "Pulsómetro") await this.leerPulso(device);
         if (conectado && device.nombre == "Bicicleta") await this.leerBicicleta(device);
-      
+
       } else { //si NO tenemos un device.id
         console.log("llamamos a la página device");
         conectado = false;
 
       }
-     
+
     }
     return conectado;
   }
@@ -106,21 +120,22 @@ export class HomePage {
       //vamos a conectarnos al último dispositivo
       this.setMensajeEstado("conectando...");
       //establecemos la conexión
-      const seHaConectado =  await this.conectar(dispositivo);
-      console.log("resultado de seha conectado"+ seHaConectado);
+      const seHaConectado = await this.conectar(dispositivo);
+      console.log("resultado de seha conectado" + seHaConectado);
       // if (seHaConectado) this.info.cambiarEstado(dispositivo)
       // else this.sendParam('devices');
-      if (seHaConectado) this.info.ponerEstado(dispositivo,"conectado")
+      if (seHaConectado) this.info.ponerEstado(dispositivo, "conectado")
       else this.sendParam('devices');
 
     } else {
       //desconectamos el dispositivo en el caso de estar conectado
       if (dispositivo.estado == "conectado") {
         //desconectamos el dispositivo
+        await this.bleTrainer.cancelarSubscripcion(dispositivo, dispositivo.servicio, dispositivo.caracteristica);
         var resultado = await this.bleTrainer.desconectarDispositivo(dispositivo.id); //FALLA
         console.log("home - 2 - hemos llamado a desconectar el dispositivo con resultado: " + resultado);
         // y cambiamos su estado (clase InfoBle)
-        this.info.ponerEstado(dispositivo,"desconectado");
+        this.info.ponerEstado(dispositivo, "desconectado");
       };
     }
   }
@@ -135,9 +150,11 @@ export class HomePage {
     console.log("home 3- leer pulso - entramos en leer pulso");
     this.bleTrainer.subscribirNotificacion(device, device.servicio, device.caracteristica);
   }
-  leerBicicleta(device:any){
-    console.log("home 3- leer bici - entramos en leer bici :" + device.nombre );
+  leerBicicleta(device: any) {
+    console.log("home 3- leer bici - entramos en leer bici :" + device.nombre);
+
     this.bleTrainer.subscribirNotificacion(device, device.servicio, device.caracteristica);
+
   }
 
   //recuperamos los parámetros de otra ventana y actualizamos el objeto InfoBle
@@ -146,7 +163,7 @@ export class HomePage {
       if (params && params.info) {
         this.info = JSON.parse(params.info);
         this.info = new InfoBle(this.info.bici, this.info.pulso);
-        console.log("(1-home) Entramos en la página y pintamos info.bici"+JSON.stringify(this.info.bici));
+        console.log("(1-home) Entramos en la página y pintamos info.bici" + JSON.stringify(this.info.bici));
       }
     }
     );
@@ -193,5 +210,66 @@ export class HomePage {
   //   });
   // }
   /* fin pruebas */
+  async escribirBici() { //inicia petición para poder manejar los niveles.
 
+    //mandamos señal de petición 
+    var datos = new Uint8Array(1);
+    datos[0] = 0x00;
+    var res = await this.bleTrainer.write(this.info.bici, this.info.bici.servicio, '2ad9', datos.buffer);
+    console.log("Primer resultado: " + res);
+
+    //mandamos de nuevo señal para iniciar training
+    datos[0] = 0x07;
+    res = await this.bleTrainer.write(this.info.bici, this.info.bici.servicio, '2ad9', datos.buffer);
+    console.log("Segundo resultado: " + res);
+
+  }
+  // async escribirNivel(){
+
+  //   var datos =new Uint8Array(3);
+  //   datos[0]= 0x04;
+  //   datos[1]= 0x1E;// 4 1 :26    0 1 : 25
+  //   datos[2]= 0x01;// 255
+
+
+
+  //   var res = await this.bleTrainer.write(this.info.bici, this.info.bici.servicio, '2ad9', datos.buffer);
+  //   console.log("Primer resultado: "+res);
+  // }
+  subirNivel() {
+    
+    if (this.nivelBici >= 32) this.nivelBici = 32;
+    else {
+      if (this.escribirNuevoNivel(this.nivelBici+1)){
+      //actualizamos la gráfica
+        this.nivelBici++; //subimos el nivel
+        this.chartNivel.chartData[0].data[0] = this.nivelBici;
+        this.chartNivel.chartData = this.chartNivel.chartData.slice();
+      }
+    }
+  }
+  bajarNivel() {
+  if (this.nivelBici <= 1) this.nivelBici = 1;
+    else {
+      if (this.escribirNuevoNivel(this.nivelBici-1)){
+      //actualizamos la gráfica
+        this.nivelBici--; //subimos el nivel
+        this.chartNivel.chartData[0].data[0] = this.nivelBici;
+        this.chartNivel.chartData = this.chartNivel.chartData.slice();
+      }
+    }
+  }
+  async escribirNuevoNivel(num: number) {
+    if (num > 32) num = 32;
+    if (num < 0) num = 0;
+    var res = await this.bleTrainer.write(this.info.bici, this.info.bici.servicio, '2ad9', this.info.nivel[num].buffer);
+    return res;
+ 
+  }
+  movergraf(){
+    this.chartTrack.temporizador();
+    
+    
+    //this.chartTrack.
+  }
 }

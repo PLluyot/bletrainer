@@ -1,11 +1,21 @@
 import { NgZone } from '@angular/core';
 import { BLE } from '@ionic-native/ble/ngx';
 
+
+
+//prueba con observables
+// import { Observable } from 'rxjs';
+
+// export interface obsPulso {
+//     pulso: any
+// }
+
 export class BleTrainer {
     public devices: any[] = [];
     public peripheral: any = {};
-    public pulsaciones: any;
-    public cadencia : any;
+    public pulsaciones: any[] = [];
+    public pulsacion = 0;
+    public cadencia: any;
     public biciNivel: any;
     public biciVel: any;
     public biciVelMed: any;
@@ -14,14 +24,23 @@ export class BleTrainer {
     public ble: BLE;
     public zona: NgZone;
 
+
+    //public prods$: Observable <obsPulso[]>;
+
     constructor() {
         this.ble = new BLE();
         this.zona = new NgZone({});
-        this.pulsaciones = 0;
+        this.pulsaciones = [];
         this.biciNivel = null;
         this.biciVel = null;
         this.biciVelMed = null;
-        this.power=0;
+        this.power = 0;
+
+    }
+    obsPulso() {
+        // this.prods$.
+        //    this.prods$ = Observable.
+        //     this.prods$.subscribe(data=>console.log("data: "+data), console.error);
     }
     /* ENCENDER BLE */
     encenderBle() {
@@ -78,7 +97,7 @@ export class BleTrainer {
 
     async establecerConexionDispositivo(objetoConexion: any, objetoConIdActual: any) {
         var conectado: boolean = false;
-        console.log("ENRTAMOS segundo paramerto:" +objetoConIdActual);
+        console.log("ENRTAMOS segundo paramerto:" + objetoConIdActual);
         console.log("tratamos de comprobar la conexion con :" + objetoConexion.id);
         if (objetoConexion && objetoConexion.id) {
 
@@ -181,7 +200,7 @@ export class BleTrainer {
         }
         else {
             console.log("CC: conectarDispositivo: Error al pasar el id del dispositivo a conectar");
-            
+
         }
         console.log("DD: antes de devolver vale-->" + resultado);
         return resultado;
@@ -240,7 +259,7 @@ export class BleTrainer {
                     caract)
                 .subscribe(
                     data => {
-                        if (device.nombre=="Pulsómetro")
+                        if (device.nombre == "Pulsómetro")
                             this.onValueChange(data[0], device);
                         else
                             this.onValueChange(data[0], device);
@@ -257,41 +276,50 @@ export class BleTrainer {
         else
             console.log("no podemos subscribirnos, parametros incorrectos");
     }
-    onValueChange(buffer: ArrayBuffer, device:any) { //hay que meter en la zona asíncrona
+    onValueChange(buffer: ArrayBuffer, device: any) { //hay que meter en la zona asíncrona
         var dataFromDevice: any;
         this.zona.run(() => {
             try {
                 //console.log("entra en valuechange " + device.nombre);
                 //if (this.pulsaciones != dataFromDevice[1])
-                if (device.nombre=="Pulsómetro") {
+                if (device.nombre == "Pulsómetro") {
                     dataFromDevice = new Uint8Array(buffer);
-                    this.pulsaciones = dataFromDevice[1];
+                    this.pulsacion = dataFromDevice[1];
+                    this.pulsaciones.push(this.pulsacion);
+                    //calculamos el pulso medio:
+                    device.pulsos.registros = this.pulsaciones;
+                    // device.pulsos.
                 }
-                else {
-                    console.log("ENTRA");
+                else { //bicicleta
+
                     dataFromDevice = new Uint8Array(buffer);
                     //dataFromDevice = String.fromCharCode.apply(null, new Uint8Array(buffer));
                     //console.log("16 datos A-->"+JSON.stringify(dataFromDevice));
-                     console.log("datos0-->"+dataFromDevice);
-                    
-                     device.arrayLectura = dataFromDevice;
-                    this.biciNivel=(dataFromDevice[9]+dataFromDevice[10]*256)/10;
-                    this.biciVel = (dataFromDevice[2]+dataFromDevice[3]*256)/100;
-                    this.biciVelMed = (dataFromDevice[7]); 
-                    this.cadencia = (dataFromDevice[4]+dataFromDevice[5]*256)/2;
-                    this.power = (dataFromDevice[11]+dataFromDevice[12]*256);
+                    console.log("datos: " + dataFromDevice);
 
+                    device.arrayLectura = dataFromDevice;
+                        this.biciNivel = (dataFromDevice[9] + dataFromDevice[10] * 256) / 10; 
+                    device.nivel = this.biciNivel;
+                        this.biciVel = (dataFromDevice[2] + dataFromDevice[3] * 256) / 100;
+                    device.velocidad = this.biciVel;
+                        this.biciVelMed = (dataFromDevice[7]);
+
+                        this.cadencia = (dataFromDevice[4] + dataFromDevice[5] * 256) / 2;
+                    device.cadencia = this.cadencia;
+                        this.power = (dataFromDevice[11] + dataFromDevice[12] * 256);
+                    device.potencia = this.power;
+                    
                     //this.cadencia= dataFromDevice;
                     // if (dataFromDevice == undefined)
                     //     dataFromDevice = this.bytesToString(buffer).replace(/\s+/g, " ");
                     // else dataFromDevice += ' ' + this.bytesToString(buffer).replace(/\s+/g, " ");
-                   // 84 --> 10000100
+                    // 84 --> 10000100
                 }
-                
+
                 //console.log("R:" + (this.pulsaciones) + "bpm" + "- " + dataFromDevice);
                 //console.log("R:---" + "- " + dataFromDevice[1]);
-               
-               
+
+
                 //console.log("datos leidos: " + this.dataFromDevice);
                 //Simply assign data to variable dataFromDevice and string concat
             } catch (e) {
@@ -302,29 +330,45 @@ export class BleTrainer {
     bytesToString(buffer) {
         return String.fromCharCode.apply(null, new Uint8Array(buffer));
     }
+    cancelarSubscripcion(device: any, servicio: string, caract: string) {
+        this.ble.stopNotification(device.id, servicio, caract).then(
+            () => console.log("Subscripción cancelada"),
+            () => console.log("Error en cancelar Subscripción")
+        );
+    }
 
-    /***************************************************************************************
-     * 
-     *                          PULSO
-     * 
-     * *************************************************************************************
-     */
-    // leerPulso(device: any) { //dispositivo con id, servicio y caracteristica
-    //     this.ble
-    //         .startNotification(device.id,
-    //             device.servicio, device.caracteristica)
-    //         .subscribe(
-    //             data => {
-    //                 // console.log("aqui"+data[0]);
-    //                 this.onValueChange(data[0]);
+    /********************************* WRITE */
+    /* a partir de aquí leemos el contenido de los distintos servicios*/
 
-    //             },
-    //             () =>
+    write(device: any, servicio: string, caract: string, inputdata: ArrayBuffer) {
 
-    //                 //this.showAlert(
-    //                 console.log("Unexpected Error",
-    //                     "Failed to subscribe for changes, please try to re-connect."
-    //                 )
-    //         );
-    // }
+        //   // Subscribe for notifications when the resitance changes
+        //    var inputdata = new Uint8Array(2);
+        //    inputdata[0] = 0x00;
+        //    inputdata[1] = 0x07;
+        //   inputdata[2] = 0x0180;
+        //    inputdata[0] = 0x53; // S
+        //    inputdata[1] = 0x54; // T
+        //    inputdata[2] = 0x0a; // LF
+        console.log ("nos conectamos con :" + device.id + " S: "+  servicio + " C: "+ caract + " data: "+ inputdata);
+        return new Promise((resolve, reject) => 
+                this.ble.write(device.id, servicio, caract, inputdata).then(
+                    data => {
+
+
+                        console.log(" retorno:" + data);
+                        
+                        resolve(true);
+                    },
+                    err => {
+                        console.log(err);
+                        reject(false);
+                    }
+                )
+        );
+        
+
+        
+    };
+
 }

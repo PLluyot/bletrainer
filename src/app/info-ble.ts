@@ -1,3 +1,4 @@
+
 export class InfoBle {
     //propiedad
     public bici: any = {
@@ -10,7 +11,11 @@ export class InfoBle {
         caracteristica: "2ad2",
         // mac: null,
         dispositivos: [],
-        arrayLectura: null
+        arrayLectura: null,
+        nivel: "20",
+        cadencia:"0",
+        velocidad:"0",
+        potencia:"0"
     };
     public pulso: any = {
         nombre: "Pulsómetro",
@@ -29,6 +34,41 @@ export class InfoBle {
             pulsoMedio: null
         }
     };
+    public nivel: any[] = [
+        new Uint8Array([0x04, 0, 0x00]),
+        new Uint8Array([0x04, 10, 0x00]),
+        new Uint8Array([0x04, 20, 0x00]),
+        new Uint8Array([0x04, 30, 0x00]),
+        new Uint8Array([0x04, 40, 0x00]),
+        new Uint8Array([0x04, 50, 0x00]),
+        new Uint8Array([0x04, 60, 0x00]),
+        new Uint8Array([0x04, 70, 0x00]),
+        new Uint8Array([0x04, 80, 0x00]),
+        new Uint8Array([0x04, 90, 0x00]),
+        new Uint8Array([0x04, 100, 0x00]),
+        new Uint8Array([0x04, 110, 0x00]),
+        new Uint8Array([0x04, 120, 0x00]),
+        new Uint8Array([0x04, 130, 0x00]),
+        new Uint8Array([0x04, 140, 0x00]),
+        new Uint8Array([0x04, 150, 0x00]),
+        new Uint8Array([0x04, 160, 0x00]),
+        new Uint8Array([0x04, 170, 0x00]),
+        new Uint8Array([0x04, 180, 0x00]),
+        new Uint8Array([0x04, 190, 0x00]),
+        new Uint8Array([0x04, 200, 0x00]),
+        new Uint8Array([0x04, 210, 0x00]),
+        new Uint8Array([0x04, 220, 0x00]),
+        new Uint8Array([0x04, 230, 0x00]),
+        new Uint8Array([0x04, 240, 0x00]),
+        new Uint8Array([0x04, 250, 0x00]),
+        new Uint8Array([0x04, 5, 1]),
+        new Uint8Array([0x04, 15, 1]),
+        new Uint8Array([0x04, 25, 1]),
+        new Uint8Array([0x04, 35, 1]),
+        new Uint8Array([0x04, 45, 1]),
+        new Uint8Array([0x04, 55, 1]),
+        new Uint8Array([0x04, 65, 1])
+    ];
     public zonas: any[] = [{
         0: {
             bps: 180
@@ -76,6 +116,9 @@ export class InfoBle {
             color: 'darkred'
         }
     }]
+
+    /**************************gráficos  */
+
     constructor(
         private newbici: any = null, private newpulso: any = null
     ) {
@@ -136,7 +179,7 @@ export class InfoBle {
         this.pulso.pulsos.pulsoMin = null;
         this.pulso.pulsos.pulsoMax = null;
         this.pulso.pulsos.pulsoMedio = null;
-        this.pulso.pulsos.registros=[];
+        this.pulso.pulsos.registros = [];
     }
     registroPulsos(valorPulso: any) {
         //almacenamos el valor mín, max y media
