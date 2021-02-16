@@ -6,7 +6,7 @@ import { InfoBle } from '../info-ble';
 import { BleTrainer } from '../ble-trainer';
 //pruebas con chars
 import { InfoCharts } from '../info-charts';
-import { timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 
 
 @Component({
@@ -17,10 +17,26 @@ import { timer } from 'rxjs';
 export class HomePage {
 
   private mensajeEstado: string = "";
-  private chartPulso: InfoCharts;
-  public chartNivel: InfoCharts;
-  private chartTrack: InfoCharts;
-  private nivelBici = 0;
+  private chartPulso: InfoCharts = new InfoCharts("pulso");
+  private chartNivel: InfoCharts = new InfoCharts("nivel");
+  private chartTrack: InfoCharts = new InfoCharts("track");
+  private chartSpinning: InfoCharts = new InfoCharts();
+  private chartPotencia: InfoCharts = new InfoCharts();
+  private chartSpinningNivel: InfoCharts = new InfoCharts();
+  
+
+  private cronometro = {
+    tiempo: new Date(0),
+    pausado: false,
+    subscrito: false
+
+  }
+  private nivelBici: any = 0;
+  private cadenciaObjetivo = 60;
+  private potenciaObjetivo =100;
+
+  private subscripcion: Subscription;
+  // private subscripcion: Subscription;
   ////private numeros=timer(3000,10000);
 
   constructor(
@@ -29,17 +45,18 @@ export class HomePage {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private ngZone: NgZone) {
-      this.chartPulso = new InfoCharts("pulso");
-      this.chartNivel = new InfoCharts("nivel");
-      this.chartTrack = new InfoCharts("track");
+
   }
   ngOnInit() {
-///this.numeros.subscribe(x => console.log(x));
+    ///this.numeros.subscribe(x => console.log(x));
+    this.chartSpinning.getChartsSesion(20);
+    this.chartPotencia.getChartsPotencia();
+    this.chartSpinningNivel.getChartsSpinningNivel();
   }
   ionViewWillEnter() {
     this.getParam();
     //metemos una zona asincrona, el valor del nivel de la bici para que lo pinte en la gráfica
-    
+
     //console.log(this.chartNivel.chartData);
   }
   // ngOnChanges(changes: SimpleChanges) {
@@ -237,11 +254,11 @@ export class HomePage {
   //   console.log("Primer resultado: "+res);
   // }
   subirNivel() {
-    
+
     if (this.nivelBici >= 32) this.nivelBici = 32;
     else {
-      if (this.escribirNuevoNivel(this.nivelBici+1)){
-      //actualizamos la gráfica
+      if (this.escribirNuevoNivel(this.nivelBici + 1)) {
+        //actualizamos la gráfica
         this.nivelBici++; //subimos el nivel
         this.chartNivel.chartData[0].data[0] = this.nivelBici;
         this.chartNivel.chartData = this.chartNivel.chartData.slice();
@@ -249,27 +266,79 @@ export class HomePage {
     }
   }
   bajarNivel() {
-  if (this.nivelBici <= 1) this.nivelBici = 1;
+    if (this.nivelBici <= 1) this.nivelBici = 1;
     else {
-      if (this.escribirNuevoNivel(this.nivelBici-1)){
-      //actualizamos la gráfica
+      if (this.escribirNuevoNivel(this.nivelBici - 1)) {
+        //actualizamos la gráfica
         this.nivelBici--; //subimos el nivel
         this.chartNivel.chartData[0].data[0] = this.nivelBici;
         this.chartNivel.chartData = this.chartNivel.chartData.slice();
       }
     }
   }
-  async escribirNuevoNivel(num: number) {
+  async escribirNuevoNivel(num: any) {
     if (num > 32) num = 32;
     if (num < 0) num = 0;
     var res = await this.bleTrainer.write(this.info.bici, this.info.bici.servicio, '2ad9', this.info.nivel[num].buffer);
     return res;
- 
+
   }
-  movergraf(){
+  movergraf() {
     this.chartTrack.temporizador();
-    
-    
+
+
     //this.chartTrack.
   }
+  iniciarCronometro() {
+
+    this.cronometro.pausado = false;
+
+    if (this.cronometro.subscrito == false) {
+      // this.cronometro.tiempo = new Date(0);
+      var segundos = timer(0, 1000);
+      this.subscripcion = segundos.subscribe(x => {
+        this.cronometro.subscrito = true;
+
+        //cambiar color de la gráficla cadencia de la grafica.
+        if (this.cronometro.tiempo.getSeconds() % 30 == 0) //cada 30 segundos acualizo la cadencia
+        {
+          //actualizamos la cadencia objetivo y potencia objetivo
+          this.cadenciaObjetivo = this.chartSpinning.sesionData.cadencia[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30];
+          this.potenciaObjetivo = this.chartSpinning.sesionData.potencia[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30];
+          
+          //cambiar el nivel de la bici
+         
+          this.escribirNuevoNivel(this.chartSpinning.sesionData.nivel[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30])
+          console.log("valor:" + this.chartSpinning.chartData[0].data[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30]);
+          
+          //almaceno el nivel de la bici actual
+          this.nivelBici = this.chartSpinning.sesionData.nivel[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30];
+          console.log("valor:" + this.nivelBici);
+          this.chartNivel.chartData[0].data[0] = this.nivelBici;
+          this.chartNivel.chartData = this.chartNivel.chartData.slice(); // actualizamos
+
+          //cada 30 segundos añado un elemento nuevo a la gráfica para cambiar el color
+          this.chartSpinning.chartData[2].data.push(200);
+        }
+        //sumamos 1 segundo
+        this.cronometro.tiempo.setSeconds(this.cronometro.tiempo.getSeconds() + 1); //sumamos 1 segundo al cronómetro.
+        //pintamos la potencia actual por cada segundo
+        this.chartPotencia.chartData[1].data.push(this.bleTrainer.power);
+        this.chartPotencia.chartData[0].data.push(this.potenciaObjetivo);
+        this.chartSpinningNivel.chartData[0].data.push(this.nivelBici);
+
+      });
+    }
+  }
+  pararCronometro() {
+    this.cronometro.pausado = true;
+    this.cronometro.subscrito = false;
+    this.subscripcion.unsubscribe();
+
+  }
+  resetearCronometro() {
+    this.cronometro.pausado = false;
+    this.cronometro.tiempo = new Date(0);
+  }
 }
+

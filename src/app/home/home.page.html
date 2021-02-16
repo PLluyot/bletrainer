@@ -14,55 +14,48 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
-<ion-content fullscreen>
+<!-- <ion-content scroll-x="true">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas minima maxime enim ipsum, asperiores sequi quisquam nulla possimus commodi nostrum vel dolores doloribus ipsa veniam tempora sapiente ad! Voluptates, eveniet?</ion-content> -->
+<ion-content> 
   <ion-grid>
-    <ion-row class="ion-text-center ion-align-items-center">
+    <ion-row class="ion-text-center ion-align-items-end">
       <ion-col size="3" (click)="cambiarEstado(info.pulso)">
-        
+
 
         <ion-label><small>{{info.pulso.nombre}}</small></ion-label><br>
         <img width="27%" src="./assets/img/heart.png" />
         <ion-card no-margin>
-          <ion-card-title>{{bleTrainer.pulsacion}}<span class="p1"> bpm</span></ion-card-title>
+          <ion-card-title>{{bleTrainer.pulsacion}}<span class="p1"> bps</span></ion-card-title>
         </ion-card>
         <ion-label class="p1" color="{{info.pulso.color}}"><small>{{info.pulso.estado}}</small>
         </ion-label>
-
-      </ion-col>
-      <ion-col  size="0.5">
-        <canvas baseChart  class="small"
-        [datasets]="this.chartPulso.chartData" 
-        [labels]="this.chartPulso.chartLabels" 
-        [options]="this.chartPulso.chartOptions" 
-        [colors]="this.chartPulso.chartColors"
-        [legend]="this.chartPulso.showLegend" 
-        [chartType]="this.chartPulso.chartType">
+  </ion-col>
+      <ion-col size="0.5" style="align-self:start">
+        <canvas baseChart class="small" [datasets]="this.chartPulso.chartData" [labels]="this.chartPulso.chartLabels"
+          [options]="this.chartPulso.chartOptions" [colors]="this.chartPulso.chartColors"
+          [legend]="this.chartPulso.showLegend" [chartType]="this.chartPulso.chartType">
         </canvas>
       </ion-col>
-      <ion-col size="5" color="dark" class="ion-align-items-start"><img width="80%" src="./assets/img/ds60.jpg"
+      <ion-col size="5" color="dark" class="ion-align-items-start"><img width="55%" src="./assets/img/ds60.jpg"
           alt="logo"><br>
         <!-- <ion-label>DS-60</ion-label> -->
       </ion-col>
-      <ion-col  size="0.5">
-        <canvas baseChart class="small"
-        [datasets]="this.chartNivel.chartData" 
-        [labels]="this.chartNivel.chartLabels" 
-        [options]="this.chartNivel.chartOptions" 
-        [colors]="this.chartNivel.chartColors"
-        [legend]="this.chartNivel.showLegend" 
-        [chartType]="this.chartNivel.chartType">
+      <ion-col size="0.5" style="align-self:start">
+        <canvas baseChart class="small" [datasets]="this.chartNivel.chartData" [labels]="this.chartNivel.chartLabels"
+          [options]="this.chartNivel.chartOptions" [colors]="this.chartNivel.chartColors"
+          [legend]="this.chartNivel.showLegend" [chartType]="this.chartNivel.chartType">
         </canvas>
       </ion-col>
       <ion-col size="3">
         <ion-label><small>{{info.bici.nombre}}</small></ion-label><br>
         <ion-icon name="remove-circle-outline" class="bigger" (click)="bajarNivel()"></ion-icon>
-        <img width="27%" src="./assets/img/bici.png" /><ion-label></ion-label>
+        <img width="27%" src="./assets/img/bici.png" />
+        <ion-label></ion-label>
         <ion-icon name="add-circle-outline" class="bigger" (click)="subirNivel()"></ion-icon>
         <ion-card no-margin (click)="cambiarEstado(info.bici)">
           <ion-card-title><span class="p1">Nivel: </span>{{bleTrainer.biciNivel || 0}}</ion-card-title>
-        </ion-card >
-        <ion-label class="p1" color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)"><small>{{info.bici.estado}}</small>
+        </ion-card>
+        <ion-label class="p1" color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)">
+          <small>{{info.bici.estado}}</small>
         </ion-label>
 
 
@@ -72,37 +65,36 @@
     <ion-row class="ion-text-center ion-align-items-end">
       <ion-col size="4">
         <!-- Datos de la Bicicleta ****************************************************** -->
-        <ion-label><small>Cadencia</small></ion-label><br>
         <img width="20%" src="./assets/img/cadencia.svg" />
         <ion-card no-margin>
-          <ion-card-title>{{bleTrainer.cadencia || 0}} <span class="p1"> rpm</span></ion-card-title>
+          <ion-card-title><span class="p1"> {{cadenciaObjetivo}}</span> {{bleTrainer.cadencia || 0}}</ion-card-title>
         </ion-card>
-        <ion-label class="p1" color="medium"><small>80</small>
-        </ion-label>
+        <ion-label><small>Cadencia - rpm</small></ion-label>
+        <!-- <ion-label class="p1" color="medium"><small>{{cadenciaObjetivo}}</small></ion-label> -->
         <!-- Fin Datos de la Bicicleta ****************************************************** -->
       </ion-col>
 
       <ion-col size="4">
         <!-- Datos de la Bicicleta ****************************************************** -->
-        <ion-label><small>Potencia</small></ion-label><br>
-        <img width="20%" src="./assets/img/potencia.svg" />
+        <img width="20%" src="./assets/img/potencia.svg" /> 
         <ion-card no-margin>
-          <ion-card-title>{{bleTrainer.power}} <span class="p1"> W</span></ion-card-title>
+          <ion-card-title><span class="p1">{{potenciaObjetivo}} </span>{{bleTrainer.power}}
+          </ion-card-title>
         </ion-card>
-        <ion-label class="p1" color="medium"><small>120</small>
-        </ion-label>
+        <ion-label><small>Potencia - W</small></ion-label>
+        <!-- <ion-label class="p1" color="medium"><small>{{potenciaObjetivo}}</small></ion-label> -->
         <!-- Fin Datos de la Bicicleta ****************************************************** -->
       </ion-col>
 
       <ion-col size="4">
         <!-- Datos de la Bicicleta ****************************************************** -->
-        <ion-label><small>Velocidad</small></ion-label><br>
         <img width="18%" src="./assets/img/velocidad.svg" />
         <ion-card no-margin>
-          <ion-card-title>{{bleTrainer.biciVel || 0}} <span class="p1"> km/h</span></ion-card-title>
+          <ion-card-title>{{bleTrainer.biciVel || 0}} <span class="p1"></span></ion-card-title>
         </ion-card>
-        <ion-label class="p1" color="medium"><small>15</small>
-        </ion-label>
+        <ion-label><small>Velocidad - km/h</small></ion-label>
+        <!-- <ion-label class="p1" color="medium"><small>15</small>
+        </ion-label> -->
         <!-- Fin Datos de la Bicicleta ****************************************************** -->
       </ion-col>
 
@@ -110,39 +102,72 @@
 
     <ion-row>
       <ion-col>
-        <canvas  baseChart 
-        [datasets]="this.chartTrack.chartData" 
-        [labels]="this.chartTrack.chartLabels" 
-        [options]="this.chartTrack.chartOptions" 
-        [colors]="this.chartTrack.chartColors"
-        [legend]="this.chartTrack.showLegend" 
-        [chartType]="this.chartTrack.chartType">
+        <!-- <div scrollX="true" scrollY="false" style="overflow:scroll; position:fixed; display:inline; right:0; bottom:0; left:0; white-space: nowrap;">  -->
+        <canvas baseChart [datasets]="this.chartSpinning.chartData" [labels]="this.chartSpinning.chartLabels"
+          [options]="this.chartSpinning.chartOptions" [colors]="this.chartSpinning.chartColors"
+          [legend]="this.chartSpinning.showLegend" [chartType]="this.chartSpinning.chartType">
         </canvas>
-      </ion-col>
-    </ion-row><ion-row>
-    <ion-col  size="0.5">
-      <canvas baseChart class="small"
-      [datasets]="this.chartNivel.chartData" 
-      [labels]="this.chartNivel.chartLabels" 
-      [options]="this.chartNivel.chartOptions" 
-      [colors]="this.chartNivel.chartColors"
-      [legend]="this.chartNivel.showLegend" 
-      [chartType]="this.chartNivel.chartType">
-      </canvas>
-    </ion-col></ion-row>
-    <ion-row>
-      <ion-col>
-       <ion-buttons>
-         <ion-button (click)="escribirBici()">WRITE</ion-button>
-         <ion-button (click)="movergraf()">MOVER</ion-button>
-       </ion-buttons>
+        <!-- </div> -->
       </ion-col>
     </ion-row>
+    <ion-row class="ion-text-center">
+      <ion-col >
+
+        <ion-buttons>
+          <ion-button (click)="escribirBici()">WR</ion-button>
+          <!-- <ion-button (click)="movergraf()">MOVER</ion-button> -->
+
+
+          <ion-button (click)="iniciarCronometro()" disabled="{{cronometro.subscrito}}">S</ion-button>
+          <ion-button (click)="pararCronometro()">X</ion-button>
+        </ion-buttons>
+      </ion-col>
+      <ion-col size="3"><ion-label>{{cronometro.tiempo.toString() | date: 'mm:ss'}}</ion-label></ion-col>
+      <ion-col size="4.5"><ion-buttons>
+       
+        <ion-button (click)="resetearCronometro()" disabled="{{!cronometro.pausado}}">R</ion-button>
+      </ion-buttons></ion-col>
+    </ion-row>
   </ion-grid>
+
   <!-- otro -->
-  
-    
-  
+  <ion-slides [options]="{ slidesPerView: '1', zoom: false, grabCursor: true  }">
+    <ion-slide>
+      <ion-col>
+        <canvas baseChart [datasets]="this.chartPotencia.chartData" [labels]="this.chartPotencia.chartLabels"
+        [options]="this.chartPotencia.chartOptions" [colors]="this.chartPotencia.chartColors"
+        [legend]="this.chartPotencia.showLegend" [chartType]="this.chartPotencia.chartType">
+      </canvas>
+      </ion-col>
+    </ion-slide>
+    <ion-slide>
+      <ion-col>
+        <canvas baseChart [datasets]="this.chartSpinningNivel.chartData" [labels]="this.chartSpinningNivel.chartLabels"
+          [options]="this.chartSpinningNivel.chartOptions" [colors]="this.chartSpinningNivel.chartColors"
+          [legend]="this.chartSpinningNivel.showLegend" [chartType]="this.chartSpinningNivel.chartType">
+        </canvas>
+      </ion-col>
+    </ion-slide>
+  </ion-slides>
+    <!-- <ion-slides [options]="{ slidesPerView: '0.5', zoom: false, grabCursor: true }">
+      <ion-slide *ngFor="let card of [0,1,2,3,4,5,6]" style="width: 150px; height: 200px; border: 2px solid #f8f8f8">
+        <ion-col>
+          <ion-label>Card #{{ card }}</ion-label>
+          <ion-img style="pointer-events:none" src="https://via.placeholder.com/150"></ion-img>
+        </ion-col>
+      </ion-slide>
+    </ion-slides> -->
+    <!-- <div class="scrolling-wrapper-flexbox">
+      
+        <canvas class="big" baseChart [datasets]="this.chartSpinning.chartData" [labels]="this.chartSpinning.chartLabels"
+        [options]="this.chartSpinning.chartOptions" [colors]="this.chartSpinning.chartColors"
+        [legend]="this.chartSpinning.showLegend" [chartType]="this.chartSpinning.chartType">
+      </canvas>
+
+      <div class="card"><h2>Card</h2></div>
+      <div class="card"><h2>Card</h2></div>
+      <div class="card"><h2>Card</h2></div>
+    </div> -->
 </ion-content>
 <ion-footer>
   <ion-toolbar class="ion-text-center">
@@ -153,6 +178,6 @@
     <ion-item color="dark">
       <ion-label class="ion-text-center">{{mensajeEstado}}</ion-label>
     </ion-item>
-    
+
   </ion-toolbar>
 </ion-footer>
