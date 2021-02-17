@@ -7,6 +7,7 @@ import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
 //charts
 import { ChartsModule } from 'ng2-charts';
+import {TarjetaComponent} from '../tarjeta/tarjeta.component';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import { ChartsModule } from 'ng2-charts';
     HomePageRoutingModule,
     ChartsModule
   ],
-  declarations: [HomePage]
+  declarations: [HomePage,TarjetaComponent],
+  entryComponents: [TarjetaComponent]
 })
 export class HomePageModule {}

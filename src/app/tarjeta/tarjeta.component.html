@@ -1,0 +1,9 @@
+<ion-label class="p1"><small>{{textup}}</small></ion-label>
+<ion-card class="ble-card" no-margin>
+  <div *ngIf="url" class="ion-card-grupo">
+    <div><img class="imglogosmall" src="{{url}}" /></div> 
+    <div *ngIf="valueIndication" class="p1">{{valueIndication}}</div>
+  </div>
+  <ion-card-title>{{value}}</ion-card-title>
+</ion-card>
+<ion-label class="p1"><small>{{textdown}}</small></ion-label>

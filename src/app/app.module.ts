@@ -13,6 +13,7 @@ import {InfoBle} from './info-ble';
 import { BleTrainer } from './ble-trainer';
 import {BLE} from '@ionic-native/ble/ngx';
 
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],

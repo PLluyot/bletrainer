@@ -48,10 +48,10 @@ export class HomePage {
 
   }
   ngOnInit() {
-    ///this.numeros.subscribe(x => console.log(x));
-    this.chartSpinning.getChartsSesion(20);
-    this.chartPotencia.getChartsPotencia();
-    this.chartSpinningNivel.getChartsSpinningNivel();
+   
+    this.chartSpinning.getChartsSesion(20); // gráfica con la sesión de spinning, partimos del nivel 20
+    this.chartPotencia.getChartsPotencia(); // grafica que contiene la potencia y la potencia actual en segundos
+    this.chartSpinningNivel.getChartsSpinningNivel(); //grafica con el nivel y el nivel actual en segundos
   }
   ionViewWillEnter() {
     this.getParam();
@@ -241,18 +241,7 @@ export class HomePage {
     console.log("Segundo resultado: " + res);
 
   }
-  // async escribirNivel(){
-
-  //   var datos =new Uint8Array(3);
-  //   datos[0]= 0x04;
-  //   datos[1]= 0x1E;// 4 1 :26    0 1 : 25
-  //   datos[2]= 0x01;// 255
-
-
-
-  //   var res = await this.bleTrainer.write(this.info.bici, this.info.bici.servicio, '2ad9', datos.buffer);
-  //   console.log("Primer resultado: "+res);
-  // }
+  
   subirNivel() {
 
     if (this.nivelBici >= 32) this.nivelBici = 32;
@@ -308,7 +297,10 @@ export class HomePage {
           
           //cambiar el nivel de la bici
          
-          this.escribirNuevoNivel(this.chartSpinning.sesionData.nivel[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30])
+          this.escribirNuevoNivel(this.chartSpinning.sesionData.nivel[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30]).then(
+            ()=> console.log("escribimos nuevo nivel"),
+            ()=>console.log("Error al cambiar de nivel")
+          )
           console.log("valor:" + this.chartSpinning.chartData[0].data[this.cronometro.tiempo.getMinutes() * 2 + this.cronometro.tiempo.getSeconds() / 30]);
           
           //almaceno el nivel de la bici actual
@@ -339,6 +331,7 @@ export class HomePage {
   resetearCronometro() {
     this.cronometro.pausado = false;
     this.cronometro.tiempo = new Date(0);
+    //reiniciar gráficas.
   }
 }
 

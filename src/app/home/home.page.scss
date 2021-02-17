@@ -1,4 +1,5 @@
-#container {
+/*************************************otro*****************/
+/*#container {
   text-align: center;
 
   position: absolute;
@@ -24,8 +25,8 @@
 
 #container a {
   text-decoration: none;
-}
-
+}*/
+/*************************************otro*****************/
 /******************** MIOS *****************/
 // ion-card img {
 //   padding-top:10px;
@@ -53,12 +54,7 @@ h1.dispositivoValor{
   // font-size:10em;
 }
 
-.grande { 
-  font-size:3em;
-  line-height:40px !important;
-  margin-bottom:0 !important;
-  padding-bottom:0 !important;
-}
+
 
 // ion-grid ion-row{
 //   display:flex !important;
@@ -69,25 +65,42 @@ h1.dispositivoValor{
 //   justify-content: flex-start !important;
 // }
 .p1 {
-  font-size:0.8rem;
+  font-size:3.5vw;
 }
-ion-col{
-  // background-color: yellow;;
-}
+// ion-col{
+//    background-color: yellow;;
+// }
 ion-card {
   margin:0;
+  padding:0.75vw;
   background-color: rgb(240, 231, 236);
   
 }
 ion-card-title {
-  font-size:2rem;
+  font-size:8vw;
   color:rgb(54, 51, 65);
 }
+img.imglogo{
+  height:20vw !important;
+  max-height: 220px !important;
+}
+img.imglogosmall{
+  height:5vw !important;
+  max-height: 220px !important;
+}
+/***************** ble card ****/
+ion-card.ble-card{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
 
 //gráficas
 canvas.small{
-  width:10px !important;
-  height:80px !important;
+  width:2vw !important;
+  height:18vw !important;
+  max-height: 220px !important;
 
 }
 

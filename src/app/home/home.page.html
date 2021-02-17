@@ -18,15 +18,19 @@
 <ion-content> 
   <ion-grid>
     <ion-row class="ion-text-center ion-align-items-end">
-      <ion-col size="3" (click)="cambiarEstado(info.pulso)">
-
-
-        <ion-label><small>{{info.pulso.nombre}}</small></ion-label><br>
-        <img width="27%" src="./assets/img/heart.png" />
-        <ion-card no-margin>
-          <ion-card-title>{{bleTrainer.pulsacion}}<span class="p1"> bps</span></ion-card-title>
-        </ion-card>
-        <ion-label class="p1" color="{{info.pulso.color}}"><small>{{info.pulso.estado}}</small>
+      <ion-col size="3.75" (click)="cambiarEstado(info.pulso)">
+        <!-- <ion-label class="p1"><small>{{info.pulso.nombre}}</small></ion-label><br>
+        <ion-card class="ble-card" no-margin>
+          <div class="ion-card-grupo">
+            <div><img  class="imglogosmall" src="./assets/img/heart.png" /></div> 
+            <div class="p1">bps</div>
+          </div>
+          
+          <ion-card-title>{{bleTrainer.pulsacion || 123}}
+          </ion-card-title>
+        </ion-card> -->
+        <app-tarjeta textup="{{info.pulso.nombre}}" url="./assets/img/heart.png" value="{{bleTrainer.pulsacion || 0}}"  valueIndication="bps"></app-tarjeta>
+        <ion-label class="p1" color="{{info.pulso.color}}" (click)="cambiarEstado(info.pulso)"><small>{{info.pulso.estado}}</small>
         </ion-label>
   </ion-col>
       <ion-col size="0.5" style="align-self:start">
@@ -35,7 +39,7 @@
           [legend]="this.chartPulso.showLegend" [chartType]="this.chartPulso.chartType">
         </canvas>
       </ion-col>
-      <ion-col size="5" color="dark" class="ion-align-items-start"><img width="55%" src="./assets/img/ds60.jpg"
+      <ion-col size="3.5" color="dark" class="ion-align-items-start"><img class="imglogo" src="./assets/img/ds60.jpg"
           alt="logo"><br>
         <!-- <ion-label>DS-60</ion-label> -->
       </ion-col>
@@ -45,18 +49,25 @@
           [legend]="this.chartNivel.showLegend" [chartType]="this.chartNivel.chartType">
         </canvas>
       </ion-col>
-      <ion-col size="3">
-        <ion-label><small>{{info.bici.nombre}}</small></ion-label><br>
-        <ion-icon name="remove-circle-outline" class="bigger" (click)="bajarNivel()"></ion-icon>
-        <img width="27%" src="./assets/img/bici.png" />
-        <ion-label></ion-label>
-        <ion-icon name="add-circle-outline" class="bigger" (click)="subirNivel()"></ion-icon>
-        <ion-card no-margin (click)="cambiarEstado(info.bici)">
-          <ion-card-title><span class="p1">Nivel: </span>{{bleTrainer.biciNivel || 0}}</ion-card-title>
-        </ion-card>
+      <ion-col size="3.75">
+        <app-tarjeta textup="{{info.bici.nombre}}" url="./assets/img/bici.png" value="{{bleTrainer.biciNivel || '-'}}"  valueIndication="Nivel"></app-tarjeta>
+        
+        <!-- <ion-label class="p1"><small>{{info.bici.nombre}}</small></ion-label><br>
+        <ion-card class="ble-card" no-margin>
+          <div class="ion-card-grupo">
+            <div><img  class="imglogosmall" src="./assets/img/bici.png" /></div> 
+            <div class="p1">Nivel</div>
+          </div>
+          
+          <ion-card-title>{{bleTrainer.biciNivel || 0}}
+          </ion-card-title>
+        </ion-card> -->
         <ion-label class="p1" color="{{info.bici.color}}" (click)="cambiarEstado(info.bici)">
           <small>{{info.bici.estado}}</small>
         </ion-label>
+        <!-- <ion-icon name="remove-circle-outline" class="bigger" (click)="bajarNivel()"></ion-icon>
+        <ion-icon name="add-circle-outline" class="bigger" (click)="subirNivel()"></ion-icon> -->
+   
 
 
       </ion-col>
@@ -65,34 +76,50 @@
     <ion-row class="ion-text-center ion-align-items-end">
       <ion-col size="4">
         <!-- Datos de la Bicicleta ****************************************************** -->
-        <img width="20%" src="./assets/img/cadencia.svg" />
-        <ion-card no-margin>
-          <ion-card-title><span class="p1"> {{cadenciaObjetivo}}</span> {{bleTrainer.cadencia || 0}}</ion-card-title>
+        <app-tarjeta textdown="Cadencia - rpm" url="./assets/img/cadencia.svg" value="{{bleTrainer.cadencia || 0}}"  valueIndication="{{cadenciaObjetivo || 0}}"></app-tarjeta>
+       
+        <!-- <ion-card class="ble-card" no-margin>
+          <div class="ion-card-grupo">
+            <div><img class="imglogosmall" src="./assets/img/cadencia.svg" /></div> 
+            <div class="p1">{{cadenciaObjetivo}}</div>
+          </div>
+          <ion-card-title>{{bleTrainer.cadencia || 80}}</ion-card-title>
         </ion-card>
-        <ion-label><small>Cadencia - rpm</small></ion-label>
+        <ion-label class="p1"><small>Cadencia - rpm</small></ion-label> -->
         <!-- <ion-label class="p1" color="medium"><small>{{cadenciaObjetivo}}</small></ion-label> -->
         <!-- Fin Datos de la Bicicleta ****************************************************** -->
       </ion-col>
 
       <ion-col size="4">
         <!-- Datos de la Bicicleta ****************************************************** -->
-        <img width="20%" src="./assets/img/potencia.svg" /> 
-        <ion-card no-margin>
-          <ion-card-title><span class="p1">{{potenciaObjetivo}} </span>{{bleTrainer.power}}
+        <app-tarjeta textdown="Potencia - W" url="./assets/img/potencia.svg" value="{{bleTrainer.power || 0}}"  valueIndication="{{potenciaObjetivo || 0}}"></app-tarjeta>
+<!--        
+        <ion-card class="ble-card" no-margin>
+          <div class="ion-card-grupo">
+            <div><img  class="imglogosmall" src="./assets/img/potencia.svg" /></div> 
+            <div class="p1">{{potenciaObjetivo}}</div>
+          </div>
+          
+          <ion-card-title>{{bleTrainer.power || 135}}
           </ion-card-title>
         </ion-card>
-        <ion-label><small>Potencia - W</small></ion-label>
+        <ion-label class="p1"><small>Potencia - W</small></ion-label> -->
         <!-- <ion-label class="p1" color="medium"><small>{{potenciaObjetivo}}</small></ion-label> -->
         <!-- Fin Datos de la Bicicleta ****************************************************** -->
       </ion-col>
 
       <ion-col size="4">
         <!-- Datos de la Bicicleta ****************************************************** -->
-        <img width="18%" src="./assets/img/velocidad.svg" />
-        <ion-card no-margin>
-          <ion-card-title>{{bleTrainer.biciVel || 0}} <span class="p1"></span></ion-card-title>
+        <app-tarjeta textdown="Velocidad - km/h" url="./assets/img/velocidad.svg" value="{{bleTrainer.biciVel || 0}}"  ></app-tarjeta>
+
+        <!-- <ion-card class="ble-card" no-margin>
+          <div class="ion-card-grupo">
+            <div><img class="imglogosmall" src="./assets/img/velocidad.svg" /></div> 
+            <div class="p1"> </div>
+          </div>
+          <ion-card-title>{{bleTrainer.biciVel || 30}}</ion-card-title>
         </ion-card>
-        <ion-label><small>Velocidad - km/h</small></ion-label>
+        <ion-label class="p1"><small>Velocidad - km/h</small></ion-label> -->
         <!-- <ion-label class="p1" color="medium"><small>15</small>
         </ion-label> -->
         <!-- Fin Datos de la Bicicleta ****************************************************** -->
@@ -122,7 +149,12 @@
           <ion-button (click)="pararCronometro()">X</ion-button>
         </ion-buttons>
       </ion-col>
-      <ion-col size="3"><ion-label>{{cronometro.tiempo.toString() | date: 'mm:ss'}}</ion-label></ion-col>
+      <ion-col size="4">
+        
+        <app-tarjeta textdown="cronómetro" value="{{cronometro.tiempo.toString() | date: 'mm:ss'}}" ></app-tarjeta>
+        
+        <!-- <ion-label>{{cronometro.tiempo.toString() | date: 'mm:ss'}}</ion-label>-->
+      </ion-col>
       <ion-col size="4.5"><ion-buttons>
        
         <ion-button (click)="resetearCronometro()" disabled="{{!cronometro.pausado}}">R</ion-button>
