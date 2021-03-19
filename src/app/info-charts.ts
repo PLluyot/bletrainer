@@ -310,77 +310,93 @@ export class InfoCharts {
         });
 
     }
-    getChartsSesion(nivelBici = 20) {
+    getChartsSesion(nivelBici = 20, numGrafica = 0, chartNivel = false, chartCadencia = false, chartPotencia = false) {
         var nivel = {
-                     0: Math.round(nivelBici * (1 / 7)),//muy bajo
-                     1: Math.round(nivelBici * (2 / 7)),//bajo
-                     2: Math.round(nivelBici * (3 / 7)),//bajo
-                     3: Math.round(nivelBici * (4 / 7)),//medio
-                     4: Math.round(nivelBici * (5 / 7)),//bajo
-                     5: Math.round(nivelBici * (6 / 7)),//medio-alto
-                     6: nivelBici, //alto
-                     7: Math.round(nivelBici * (8 / 7)), //alto
-                     8: Math.round(nivelBici * (9 / 7)),//bajo
-                     9: Math.round(nivelBici * (10 / 7)) //muy alto
-                 }
-                 var arrayBase = [];
-                 for (let i = 0; i < 60; i++) {
-                     arrayBase.push(nivelBici);
-     }
-        this.sesionData = {
-            nivel: [nivel[0], nivel[0], nivel[1], nivel[2], nivel[2], nivel[3], nivel[3], nivel[4], nivel[5], nivel[5], 
-                nivel[4], nivel[6], nivel[4], nivel[6], nivel[7], nivel[7], nivel[7], nivel[6], nivel[5], nivel[4], 
-                nivel[4], nivel[5], nivel[7], nivel[7], nivel[8], nivel[5], nivel[4], nivel[4], nivel[6], nivel[6], 
-                nivel[6], nivel[7], nivel[5], nivel[4], nivel[3], nivel[5], nivel[6], nivel[8], nivel[8], nivel[4],
-                nivel[5], nivel[7], nivel[8], nivel[3], nivel[4], nivel[6], nivel[8], nivel[9], nivel[5], nivel[5], 
-                nivel[6], nivel[7], nivel[6], nivel[6], nivel[5], nivel[4], nivel[4], nivel[3], nivel[3], nivel[2], nivel[1]],
-            cadencia: [70, 75, 85, 90, 100, 100, 100, 80, 75, 73, 
-                        75, 85, 70, 70, 70, 70, 70, 70, 70, 70,
-                        68, 68, 68, 68, 68, 68, 70, 70, 70, 70, 
-                        70, 70, 70, 70, 65, 65, 65, 65, 65, 65, 
-                        65, 65, 68, 70, 65, 65, 65, 65, 65, 65, 
-                        65, 65, 65, 65, 75, 80, 80, 75, 70, 70, 60],
-            potencia: [100,120,130,140,160,170,170,160,160,166,
-                        170,180,160,190,200,120,126,166,175,
-                        170,180,160,210,200,120,226,266,275,
-                        170,180,160,190,200,120,126,166,175,
-                        170,180,160,210,200,198,226,266,275,
-                        80,90,100,110,120,120,130,134,150,166,
-                        80,90,100,110,120,120,130,134,150,166,123]
-        };
-        this.chartLabels = this.arrayEtiquetasTiempo(this.sesionData.nivel.length-1);
+            0: Math.round(nivelBici * (1 / 7)),//muy bajo
+            1: Math.round(nivelBici * (2 / 7)),//bajo
+            2: Math.round(nivelBici * (3 / 7)),//bajo
+            3: Math.round(nivelBici * (4 / 7)),//medio
+            4: Math.round(nivelBici * (5 / 7)),//bajo
+            5: Math.round(nivelBici * (6 / 7)),//medio-alto
+            6: nivelBici, //alto
+            7: Math.round(nivelBici * (8 / 7)), //alto
+            8: Math.round(nivelBici * (9 / 7)),//bajo
+            9: Math.round(nivelBici * (10 / 7)) //muy alto
+        }
+        this.sesionData = [{
+            nivel: [nivel[0], nivel[0], nivel[1], nivel[2], nivel[2], nivel[3], nivel[3], nivel[4], nivel[5], nivel[5],
+            nivel[4], nivel[6], nivel[4], nivel[6], nivel[7], nivel[7], nivel[7], nivel[6], nivel[5], nivel[4],
+            nivel[4], nivel[5], nivel[7], nivel[7], nivel[8], nivel[5], nivel[4], nivel[4], nivel[6], nivel[6],
+            nivel[6], nivel[7], nivel[5], nivel[4], nivel[3], nivel[5], nivel[6], nivel[8], nivel[8], nivel[4],
+            nivel[5], nivel[7], nivel[8], nivel[3], nivel[4], nivel[6], nivel[8], nivel[9], nivel[5], nivel[5],
+            nivel[6], nivel[7], nivel[6], nivel[6], nivel[5], nivel[4], nivel[4], nivel[3], nivel[3], nivel[2], nivel[1]],
+            cadencia: [70, 75, 85, 90, 100, 100, 100, 80, 75, 73,
+                75, 85, 70, 70, 70, 70, 70, 70, 70, 70,
+                68, 68, 68, 68, 68, 68, 70, 70, 70, 70,
+                70, 70, 70, 70, 65, 65, 65, 65, 65, 65,
+                65, 65, 68, 70, 65, 65, 65, 65, 65, 65,
+                65, 65, 65, 65, 75, 80, 80, 75, 70, 70, 60],
+            potencia: [70, 80, 130, 140, 160, 170, 170, 160, 160, 166,
+                170, 180, 160, 190, 200, 120, 126, 166, 175,
+                170, 180, 160, 210, 200, 120, 226, 266, 275,
+                170, 180, 160, 190, 200, 120, 126, 166, 175,
+                170, 180, 160, 210, 200, 198, 226, 266, 275,
+                80, 90, 100, 110, 120, 120, 130, 134, 150, 166,
+                80, 90, 100, 110, 120, 120, 130, 134, 150, 166, 123]
+        }, {
+            nivel: [nivel[3], nivel[3], nivel[4], nivel[4], nivel[4], nivel[5], nivel[6], nivel[6], nivel[6], nivel[6],
+            nivel[7], nivel[7], nivel[7], nivel[7], nivel[4], nivel[4], nivel[7], nivel[7], nivel[7], nivel[7]],
+            cadencia: [80, 80, 80, 80, 80, 80, 80, 80, 80, 80,
+                80, 80, 80, 80, 80, 80, 80, 80, 80, 80],
+            potencia: [140, 140, 140, 140, 140, 200, 200, 200, 200, 200,
+                300, 300, 300, 300, 300, 300, 300, 300, 300, 300]
+        }];
 
-        this.chartData = [{
-            data: this.sesionData.potencia, lineTension: 0
-        },
-        { data: this.sesionData.cadencia },
-        {data: []}];
+        //reiniciamos el array de datos
+        this.chartData = [];
 
+        //almacenamos la grafica con el nivel y/o cadencia y/o potencia
+        if (chartNivel) {
+            this.chartData.push({ data: this.sesionData[numGrafica].nivel, label: 'Nivel' });
+            this.chartColors.push({borderColor: '#D10B4F', backgroundColor: '#D10B4F3a'});
+        }
+        if (chartCadencia) {
+            this.chartData.push({ data: this.sesionData[numGrafica].cadencia, lineTension: 0, label: 'Cadencia' });
+            this.chartColors.push({borderColor: '#301770', backgroundColor: '#3017703A'});
+        }
+        if (chartPotencia) {
+            this.chartData.push({ data: this.sesionData[numGrafica].potencia, lineTension: 0, label: 'Potencia' });
+            this.chartColors.push({borderColor: '#A24FAB', backgroundColor: '#A24FAB3A'});
+        }
+        this.chartData.push({ data: [], label: 'Medición' });
+        this.chartColors.push({borderColor: 'black'});
+
+        this.chartLabels = this.arrayEtiquetasTiempo(this.sesionData[numGrafica].nivel.length - 1);
         this.chartType = 'line';
-        this.showLegend = false;
+        this.showLegend = true;
         this.chartOptions = this.getCommonChartOptions();
     }
     getChartsPotencia() {
-     
-        this.chartLabels = this.arrayEtiquetasTiempo(1800,new Date(0),1);
+
+        this.chartLabels = this.arrayEtiquetasTiempo(1800, new Date(0), 1);
 
         this.chartData = [{
             data: []
         },
-        {data: []}];
+        { data: [] }];
 
         this.chartType = 'line';
         this.showLegend = false;
         this.chartOptions = this.getCommonChartOptions(3);
     }
     getChartsSpinningNivel() {
-     
-        this.chartLabels = this.arrayEtiquetasTiempo(1800,new Date(0),1);
+
+        this.chartLabels = this.arrayEtiquetasTiempo(1800, new Date(0), 1);
 
         this.chartData = [{
             data: []
         },
-        {data: []}];
+        { data: [] }];
 
         this.chartType = 'line';
         this.showLegend = false;
@@ -511,18 +527,18 @@ export class InfoCharts {
     //         }
     //     };
     // }
-    getCommonChartOptions(aspect: any=2, unidad:any='minute', saltos:any=5){
-        var array : ChartOptions = {
+    getCommonChartOptions(aspect: any = 2, unidad: any = 'minute', saltos: any = 5) {
+        var array: ChartOptions = {
             responsive: true,
             maintainAspectRatio: true,
             aspectRatio: aspect,
             scales: {
                 yAxes: [{
                     ticks: {
-                        display: true, 
+                        display: true,
                         stepSize: 10,
-
-                        max: 300
+                        beginAtZero: true 
+                        //max: 300
                     }
                 }],
                 xAxes: [{
@@ -535,27 +551,31 @@ export class InfoCharts {
                         unitStepSize: saltos,
                         displayFormats: {
                             'minute': "mm",//this.person.Use24h ? 'HH:mm' : 'hh:mm A'
-                        
+
                         }
-                        
+
                     },
                     ticks: {
                         display: true,
                         //maxTicksLimit:4,
                         beginAtZero: true,
 
-                       
+
                     }
                 }
                 ]
             },
             title: {
-                display: true,
+                display: false,
                 text: 'Workout-prueba'
             },
             elements: {
                 point: {
                     radius: 0
+                },
+                line: {
+                    stepped: false,
+                    borderWidth:2
                 }
             },
             layout: {
@@ -563,7 +583,17 @@ export class InfoCharts {
                     left: 0,
                     right: 0
                 }
+                
             },
+            legend: {
+                position: 'top',
+                labels: {
+                    fontSize: 8,
+                    boxWidth: 10
+                },
+                fullWidth: false,
+            
+            }
             // tooltips: {
             //     mode: 'index'
             // },

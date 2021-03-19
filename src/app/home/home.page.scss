@@ -132,3 +132,24 @@ canvas.big{
   // height:800px !important;
 
 }
+.toogle{
+  // margin:0 !important;
+  // padding:0 !important;
+  display:flex !important;
+  width:100%;
+  justify-content: flex-end;
+  align-items: center;
+  // flex-direction: row;
+  // flex-wrap: nowrap;
+  // align-items: flex-start;
+}
+ion-toggle{
+  width:10vw;
+  height: 3vw;
+}
+ ionic-button.crono{
+   max-width:5vw;
+   height: 4vw;
+   margin:2px ;
+   background-color: rgb(131, 122, 131);
+ }
