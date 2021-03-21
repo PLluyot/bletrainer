@@ -13,11 +13,13 @@ import {InfoBle} from './info-ble';
 import { BleTrainer } from './ble-trainer';
 import {BLE} from '@ionic-native/ble/ngx';
 
+import {IonicStorageModule} from '@ionic/storage-angular';
+
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot()],
   providers: [
     InfoBle,
     BleTrainer,

@@ -11,6 +11,9 @@
       <ion-button (click)="sendParam('about')">
         <ion-icon slot="icon-only" name="information-circle-outline"></ion-icon>
       </ion-button>
+      <ion-button (click)="sendParam('settings')">
+        <ion-icon slot="icon-only" name="information-circle-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -133,7 +136,7 @@
 
     </ion-row>
 
-    <ion-row>
+    <ion-row [hidden]="!ergModel">
       <ion-col>
         <!-- <div scrollX="true" scrollY="false" style="overflow:scroll; position:fixed; display:inline; right:0; bottom:0; left:0; white-space: nowrap;">  -->
         <canvas baseChart [datasets]="this.chartSpinning.chartData" [labels]="this.chartSpinning.chartLabels"
@@ -144,7 +147,7 @@
       </ion-col>
     </ion-row>
     <ion-row class="ion-text-center">
-      <ion-col size="4">
+      <ion-col size="4" [hidden]="!ergModel">
 
         <!-- <ion-buttons> -->
           <!-- <ion-button (click)="escribirBici()">WR</ion-button><br> -->
@@ -175,7 +178,7 @@
 
         <!-- </ion-buttons> -->
       </ion-col>
-      <ion-col size="4">
+      <ion-col size="4" [hidden]="!ergModel">
 
         <app-tarjeta textdown="cronómetro" value="{{cronometro.tiempo.toString() | date: 'mm:ss'}}"></app-tarjeta>
 
@@ -183,7 +186,7 @@
       </ion-col>
       <ion-col size="4" class="ion-text-center toogle">
         <small>ERG:</small>
-        <ion-toggle [(ngModel)]="ergModel">ff</ion-toggle>
+        <ion-toggle [(ngModel)]="ergModel" (ionChange)="cambiarERG($event)">ff</ion-toggle>
       </ion-col>
     </ion-row>
 

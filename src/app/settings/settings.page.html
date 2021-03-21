@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>settings</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="sendParam()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        Nombre:
+      </ion-col>
+      <ion-col>
+        aaaioni
+      </ion-col>
+      
+    </ion-row>
+
+  </ion-grid>
+  <!-- <ion-buttons slot="end"> -->
+    <ion-button (click)="setValorStorage('a',1)">escribir</ion-button>
+    <ion-button (click)="getValorStorage('a')">leer</ion-button>
+  <!-- </ion-buttons> -->
+</ion-content>

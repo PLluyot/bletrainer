@@ -61,23 +61,13 @@ export class HomePage {
     this.chartPotencia.getChartsPotencia(); // grafica que contiene la potencia y la potencia actual en segundos
     // this.chartSpinningNivel.getChartsSpinningNivel(); //grafica con el nivel y el nivel actual en segundos
     this.chartSPNivelCad.getChartsSesion(20,this.numSesion,true,true,false);
+
+    //la primera vez nos autoconectamos
+    //if(this.info.bici.estado == "desconectado") this.cambiarEstado(this.info.bici);
   }
   ionViewWillEnter() {
     this.getParam();
-    //metemos una zona asincrona, el valor del nivel de la bici para que lo pinte en la gráfica
-
-    //console.log(this.chartNivel.chartData);
   }
-  // ngOnChanges(changes: SimpleChanges) {
-  //   for (let propName in changes) {
-  //     let change = changes[propName];
-  //     let curVal = JSON.stringify(change.currentValue);
-  //     let prevVal = JSON.stringify(change.previousValue);
-
-  //     console.log("CAMBIO: " + prevVal + " nuevovalor: " + curVal);
-
-  //   }
-  // }
 
 
   /************************************************ */
@@ -98,8 +88,6 @@ export class HomePage {
   /*                                      --> si no podemos --> NO
   /************************************************** */
   async conectar(device: any) {
-    //console.log("home 1 - infoBle" + device.nombre + " está " + device.estado);
-    //var seConecto: boolean = false;
     // si la conexión está establecida:
     var conectado = await this.bleTrainer.estaConectado(device.id);
     if (conectado == true) {
@@ -130,7 +118,7 @@ export class HomePage {
     return conectado;
   }
   /************************************************ */
-  /* función cambiarEstado
+  /* función cambiarEstado (trata de cambiar estado, llama a conectar)
   /* params:  dispositivo --> recibe un dispositivo (bici, pulso) para cambiar su estado (conectado o desconectado)
   /* variables:     
   /*        seHaCambiadoEstado --> indica si el dispositivo ha cambiado de estado en esta función
@@ -341,6 +329,16 @@ export class HomePage {
     this.cronometro.pausado = false;
     this.cronometro.tiempo = new Date(0);
     //reiniciar gráficas.
+  }
+
+  /** toogle  */
+  cambiarERG(){
+    console.log("cambio erg", "--", this.ergModel);
+    // if (!this.ergModel){
+    //   //deshabilitamos el cronómetro y las gráficas
+    //   this.pararCronometro();
+      
+    // };
   }
 }
 

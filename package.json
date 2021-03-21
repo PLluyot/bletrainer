@@ -25,11 +25,14 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^5.0.0",
     "@ionic/pro": "2.0.4",
+    "@ionic/storage": "^3.0.2",
+    "@ionic/storage-angular": "^3.0.2",
     "chart.js": "^2.9.4",
     "chartjs-plugin-zoom": "^0.7.7",
     "cordova-android": "9.0.0",
     "cordova-browser": "6.0.0",
     "cordova-plugin-ble-central": "1.3.1",
+    "cordova-sqlite-storage": "5.1.0",
     "device": "0.3.12",
     "ng2-charts": "^2.4.2",
     "rxjs": "~6.5.5",
@@ -76,7 +79,8 @@
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
-      "cordova-plugin-ionic-keyboard": {}
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-sqlite-storage": {}
     },
     "platforms": [
       "android",
